@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "306071501375",
+    "firebase_url": "https://instagram-captions-2ed03.firebaseio.com",
+    "project_id": "instagram-captions-2ed03",
+    "storage_bucket": "instagram-captions-2ed03.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306071501375:android:2693860c69e1a92bab568a",
+        "android_client_info": {
+          "package_name": "com.dheerendrakumar.quiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306071501375-peiks3mhdq4rr6ve4g3pfno2afeammko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClixBjEpEAiShtQNq-wJmMQ-Gi7jGaruc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "306071501375-peiks3mhdq4rr6ve4g3pfno2afeammko.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306071501375:android:5b611bf03deb8381ab568a",
+        "android_client_info": {
+          "package_name": "com.example.instagramcaptions"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306071501375-peiks3mhdq4rr6ve4g3pfno2afeammko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClixBjEpEAiShtQNq-wJmMQ-Gi7jGaruc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "306071501375-peiks3mhdq4rr6ve4g3pfno2afeammko.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
