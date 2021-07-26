@@ -1,6 +1,7 @@
 package com.dheerendrakumar.quiz;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.animation.Animator;
 import android.app.AlertDialog;
@@ -10,12 +11,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.models.PieModel;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -23,6 +30,7 @@ import java.util.Collections;
 
 public class VocabQuizActivity extends AppCompatActivity {
 
+    PieChart pieChart;
     ArrayList<String> questions;
     ArrayList<String> correctAnswers;
     ArrayList<ArrayList<String>> incorrectAnswers;
@@ -31,12 +39,14 @@ public class VocabQuizActivity extends AppCompatActivity {
     LinearLayout mainLinearLayout;
     SecureRandom secureRandom;
     int score=0;
-    int numberOgQuestions=0;
+    int numberOfQuestions=0;
     Handler handler;
     TextView textView;
     TextView scoreTextview;
     Animator animator;
     int totalscore=0;
+    int qn=1;
+    TextView questionNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +63,8 @@ public class VocabQuizActivity extends AppCompatActivity {
         textView = findViewById(R.id.vocabquestiontextView);
         linearLayout = findViewById(R.id.vocabbuttonLinearLayout);
         mainLinearLayout = findViewById(R.id.vocabmainLiearLayout);
-        scoreTextview = findViewById(R.id.vocabscoreTextview);
+        scoreTextview = findViewById(R.id.score);
+        questionNumber = findViewById(R.id.questionNumber);
         secureRandom = new SecureRandom();
         handler = new Handler();
 
@@ -62,12 +73,13 @@ public class VocabQuizActivity extends AppCompatActivity {
         correctAnswers = intent.getStringArrayListExtra("correctAnswer");
         Bundle args = intent.getBundleExtra("BUNDLE");
         incorrectAnswers = (ArrayList<ArrayList<String>>) args.getSerializable("ARRAYLIST");
-        numberOgQuestions = questions.size();
+        numberOfQuestions = questions.size();
 
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
 
+                questionNumber.setText("Question Number : "+qn);
                 icAnswers = incorrectAnswers.get(0);
                 icAnswers.add(correctAnswers.get(0));
                 Collections.shuffle(icAnswers);
@@ -102,9 +114,9 @@ public class VocabQuizActivity extends AppCompatActivity {
             if(guessValue.equals(correctAnswers.get(0))) {
                 totalscore++;
                 score++;
-                scoreTextview.setText("Score : "+score+" / "+numberOgQuestions);
+                scoreTextview.setText("Score : "+score+" / "+numberOfQuestions);
                 disableAllQuizButtons(false);
-                btnGuess.setBackgroundColor(Color.GREEN);
+                btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
                 Toast.makeText(VocabQuizActivity.this, "right", Toast.LENGTH_SHORT).show();
 
                 questions.remove(0);
@@ -112,21 +124,9 @@ public class VocabQuizActivity extends AppCompatActivity {
                 incorrectAnswers.remove(0);
                 correctAnswers.remove(0);
 
-                if(totalscore==numberOgQuestions) {
+                if(totalscore==numberOfQuestions) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(VocabQuizActivity.this);
-                    builder.setCancelable(false);
-
-
-                    builder.setMessage(String.valueOf(score) + "/" + numberOgQuestions);
-                    builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-
-                    builder.show();
+                    showPopup(view);
 
                 }
                 else {
@@ -139,25 +139,30 @@ public class VocabQuizActivity extends AppCompatActivity {
                 }
             } else {
                 totalscore++;
-                btnGuess.setBackgroundColor(Color.RED);
-                disableAllQuizButtons(true);
+                btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.wrong_button,null));
+                disableAllQuizButtons(false);
                 questions.remove(0);
                 icAnswers = new ArrayList<>();
                 incorrectAnswers.remove(0);
                 correctAnswers.remove(0);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateAnimalQuiz(true);
-                    }
-                }, 1000);
+
+                if(totalscore==numberOfQuestions) {
+                    showPopup(view);
+                } else {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateAnimalQuiz(true);
+                        }
+                    }, 1000);
+                }
 
             }
         }
     };
 
 
-    private void animateAnimalQuiz(boolean animateOutAnimalImage) {
+    private void animateAnimalQuiz(boolean animateQuiz) {
 
         int xTopLeft = 0;
         int yTopLeft = 0;
@@ -169,7 +174,7 @@ public class VocabQuizActivity extends AppCompatActivity {
 
 
 
-        if(animateOutAnimalImage) {
+        if(animateQuiz) {
 
             animator = ViewAnimationUtils.createCircularReveal(mainLinearLayout,xBottomRight,yBottomRight,radius,0);
 
@@ -205,6 +210,8 @@ public class VocabQuizActivity extends AppCompatActivity {
 
     public void showNextQuestion() {
 
+        qn++;
+        questionNumber.setText("Question Number : "+qn);
         textView.setText(questions.get(0));
         icAnswers = incorrectAnswers.get(0);
         icAnswers.add(correctAnswers.get(0));
@@ -212,7 +219,7 @@ public class VocabQuizActivity extends AppCompatActivity {
 
         for(int i=0;i<linearLayout.getChildCount();i++) {
             Button btn = (Button) linearLayout.getChildAt(i);
-            btn.setBackgroundColor(getColor(R.color.buttoncolor));
+            btn.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.truefalsebutton_corner,null));
         }
 
         for(int j=0;j<linearLayout.getChildCount();j++) {
@@ -230,5 +237,52 @@ public class VocabQuizActivity extends AppCompatActivity {
             Button btn = (Button) linearLayout.getChildAt(i);
             btn.setEnabled(isEnable);
         }
+    }
+
+    public void showPopup(View view) {
+
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.popup_window, null);
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = false; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        TextView totalQuestionPopup = (TextView)popupView.findViewById(R.id.totalQuestionPopup);
+        totalQuestionPopup.setText("Total Question : "+numberOfQuestions);
+        TextView attempted = (TextView) popupView.findViewById(R.id.attemptedPopup);
+        attempted.setText("Attempted : "+numberOfQuestions);
+        TextView correct = (TextView) popupView.findViewById(R.id.correctpopup);
+        correct.setText("Correct : "+score);
+        TextView incorrect = (TextView)popupView.findViewById(R.id.incorrectpopup);
+        incorrect.setText("Incorrect : "+(numberOfQuestions-score));
+        TextView scoree = (TextView) popupView.findViewById(R.id.scorepopup);
+        scoree.setText("Score : "+score+" / "+numberOfQuestions);
+
+        pieChart = (PieChart)popupView.findViewById(R.id.piechart);
+        pieChart.addPieSlice(
+                new PieModel(
+                        "Correct",
+                        score,
+                        Color.parseColor("#00FF00")));
+        pieChart.addPieSlice(
+                new PieModel(
+                        "Incorrect",
+                        numberOfQuestions-score,
+                        Color.parseColor("#FF0000")));
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        pieChart.startAnimation();
+
+        Button finish = (Button) popupView.findViewById(R.id.finishpopup);
+        finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(VocabQuizActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }

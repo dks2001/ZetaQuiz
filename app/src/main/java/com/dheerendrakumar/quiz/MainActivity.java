@@ -8,8 +8,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -30,6 +33,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Objects;
 
 
@@ -52,6 +59,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+
         randomQuiz = findViewById(R.id.randomQuiz);
         dailyQuiz = findViewById(R.id.dailyquiz);
         vocab = findViewById(R.id.vocabImageview);
@@ -61,10 +79,16 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         //firebaseUser = mAuth.getCurrentUser();
         String uid = mAuth.getUid();
+        Log.i("uidddddd",uid);
 
 
-       // String email = currentUser.getEmail();
-        //Log.i("myemailllllll",email);
+
+
+        NavigationView navigationView = findViewById(R.id.my_navigation_view);
+        View view = navigationView.getHeaderView(0);
+        ImageView profileImageView = (ImageView)view.findViewById(R.id.profilePic);
+        TextView nameTextView = (TextView) view.findViewById(R.id.name);
+        TextView emailTextView = (TextView) view.findViewById(R.id.email);
 
         DocumentReference docRef = db.collection("user").document(uid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -74,8 +98,16 @@ public class MainActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Log.d("", "DocumentSnapshot data: " + document.getData());
-                        myname = document.getString("name");
-                        myemail = document.getString("email");
+                        nameTextView.setText(document.getString("name"));
+                        emailTextView.setText(document.getString("email"));
+
+                        if(!document.getString("imageUrl").equals("null")) {
+                            profileImageView.setImageBitmap(getBitmapFromURL(document.getString("imageUrl")));
+
+                        } else {
+                            profileImageView.setImageResource(R.drawable.profileicon);
+                        }
+
                     } else {
                         Log.d("", "No such document");
                     }
@@ -84,25 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-        NavigationView navigationView = findViewById(R.id.my_navigation_view);
-        View view = navigationView.getHeaderView(0);
-        ImageView profileImageView = (ImageView)view.findViewById(R.id.profileButton);
-        TextView nameTextView = (TextView) view.findViewById(R.id.name);
-        TextView emailTextView = (TextView) view.findViewById(R.id.email);
-
-        nameTextView.setText(myname);
-        emailTextView.setText(myemail);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -120,8 +133,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        toolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
+
 
         for(int i=0;i<Category.category.length;i++) {
             final int j=i;
@@ -165,4 +177,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            Log.e("src",src);
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            Log.e("Bitmap",myBitmap+"");
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("Exception",e.getMessage());
+            return null;
+        }
+    }
 }

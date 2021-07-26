@@ -1,11 +1,16 @@
 package com.dheerendrakumar.quiz;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -36,6 +41,7 @@ import java.util.List;
 
 public class SpecificationsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    Toolbar toolbar;
     String[] numberOfQuestions = {"Number Of Questions","5","10","15","20"};
     String[] difficultyLevel = {"Difficulty Level","easy","medium","hard"};
     String[] type = {"Set Type","Multiple Choice","True/False"};
@@ -55,6 +61,10 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specifications);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         spinner = findViewById(R.id.QuestionNumberSpinner);
          dlSpiiner = findViewById(R.id.dlSpinner);
          toq = findViewById(R.id.typeSpinner);
@@ -66,7 +76,7 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
 
         ImageView imageView = findViewById(R.id.imageView);
         imageView.setY(-1000);
-        imageView.animate().translationY(50).setDuration(1000).alpha(1);
+        imageView.animate().translationY(0).setDuration(1000).alpha(1);
 
         spinner.setOnItemSelectedListener(SpecificationsActivity.this);
         dlSpiiner.setOnItemSelectedListener(SpecificationsActivity.this);
@@ -83,6 +93,17 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
         ArrayAdapter typeOfQuestion = new ArrayAdapter(this, android.R.layout.simple_spinner_item,type);
         typeOfQuestion.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         toq.setAdapter(typeOfQuestion);
+
+
+        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SpecificationsActivity.this,MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
 
         start.setOnClickListener(new View.OnClickListener() {

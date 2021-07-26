@@ -49,6 +49,7 @@ public class LauncherActivity extends AppCompatActivity {
     GoogleSignInAccount account;
     FirebaseFirestore db;
     Handler handler;
+    Map<String, Object> userrr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,8 @@ public class LauncherActivity extends AppCompatActivity {
         signinButton = findViewById(R.id.signinButton);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
+
+
 
 
         signinButton.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +106,7 @@ public class LauncherActivity extends AppCompatActivity {
                                                 Log.w("no", "signInWithEmail:failure", task.getException());
                                                 Toast.makeText(LauncherActivity.this, "Authentication failed.",
                                                         Toast.LENGTH_SHORT).show();
+                                                progress.dismiss();
                                             }
                                         }
                                     });
@@ -133,7 +137,7 @@ public class LauncherActivity extends AppCompatActivity {
                                                 newUser.put("name", nameEditText.getText().toString());
                                                 newUser.put("email", emailEditText.getText().toString());
                                                 newUser.put("imageUrl", "null");
-                                               // addDataToFirebase(newUser,emailEditText.getText().toString());
+                                               addDataToFirebase(task,newUser);
 
                                                 Intent intent = new Intent(LauncherActivity.this, MainActivity.class);
                                                 startActivity(intent);
@@ -144,6 +148,7 @@ public class LauncherActivity extends AppCompatActivity {
                                                 Log.w("no", "createUserWithEmail:failure", task.getException());
                                                 Toast.makeText(LauncherActivity.this, "Authentication failed.",
                                                         Toast.LENGTH_SHORT).show();
+                                                progress.dismiss();
                                             }
                                         }
                                     });
@@ -178,6 +183,8 @@ public class LauncherActivity extends AppCompatActivity {
          });
     }
 
+
+
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -195,25 +202,13 @@ public class LauncherActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d("pppp", "firebaseAuthWithGoogle:" + account.getEmail());
 
-                Map<String, Object> user = new HashMap<>();
-                user.put("name", account.getDisplayName());
-                user.put("email", account.getEmail());
-                user.put("imageUrl", account.getPhotoUrl()+"");
+                userrr = new HashMap<>();
+                userrr.put("name", account.getDisplayName());
+                userrr.put("email", account.getEmail());
+                userrr.put("imageUrl", account.getPhotoUrl()+"");
                 Log.i("image",account.getPhotoUrl()+"");
 
                 firebaseAuthWithGoogle(account.getIdToken());
-
-               /* handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //addDataToFirebase(user,account.getEmail());
-
-                        Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
-                        startActivity(intent);
-                    }
-                },3000); */
-
-
 
 
             } catch (ApiException e) {
@@ -233,6 +228,7 @@ public class LauncherActivity extends AppCompatActivity {
             Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
             startActivity(intent);
         }
+
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
@@ -246,35 +242,9 @@ public class LauncherActivity extends AppCompatActivity {
                             Log.d("pppp", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            db.collection("user").document(task.getResult().getUser().getUid())
-                                    .set(user)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d("", "DocumentSnapshot successfully written!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w("", "Error writing document", e);
-                                        }
-                                    });
+                            addDataToFirebase(task,userrr);
 
-                         /*   UserProfileChangeRequest updateprofile = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(account.getDisplayName())
-                                    .build();
 
-                            FirebaseAuth.getInstance().getCurrentUser().updateProfile(updateprofile)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-
-                                        }
-                                    }); */
-
-                            Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
-                            startActivity(intent);
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -285,14 +255,16 @@ public class LauncherActivity extends AppCompatActivity {
                 });
     }
 
-  /*  public void addDataToFirebase(Map<String,Object> user,String email) {
+    public void addDataToFirebase(Task<AuthResult> task,Map<String, Object> newUser) {
 
-        db.collection("user").document(Objects.requireNonNull())
-                .set(user)
+        db.collection("user").document(task.getResult().getUser().getUid())
+                .set(newUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("", "DocumentSnapshot successfully written!");
+                        Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
+                        startActivity(intent);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -301,5 +273,6 @@ public class LauncherActivity extends AppCompatActivity {
                         Log.w("", "Error writing document", e);
                     }
                 });
-    } */
+    }
+
 }

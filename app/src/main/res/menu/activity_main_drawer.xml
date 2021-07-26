@@ -6,8 +6,12 @@
         <item
             android:id = "@+id/nav_edit"
             android:icon = "@drawable/edit"
-            
-            android:title = "Share your question" />
+            android:title = "Share your question"/>
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout"
+            android:title="Logout"/>
 
     </group>
     <item android:title = "Communicate">

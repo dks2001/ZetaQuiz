@@ -20,89 +20,95 @@
         app:menu="@menu/activity_main_drawer"/>
 
 
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFF33"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
-
-    <include layout="@layout/toolbar_for_drawer"/>
-
-
     <LinearLayout
-        android:id="@+id/dailyquiz"
-        android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/randomQuiz"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_margin="10dp"
-            android:layout_weight="50"
-            android:background="@android:color/holo_red_light"
-            android:text="Random Quiz\n" />
-
-        <Button
-            android:id="@+id/vocabImageview"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_margin="10dp"
-            android:layout_weight="50"
-            android:background="@android:color/holo_red_light"
-            android:text=" English \nvocabulary" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        tools:context=".MainActivity">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            android:padding="5dp"
-            android:paddingStart="5dp"
-            android:text="Select Category"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
+        <include layout="@layout/toolbar_for_drawer" />
+
 
         <LinearLayout
+            android:id="@+id/dailyquiz"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="170dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <ScrollView
+            <Button
+                android:id="@+id/randomQuiz"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="150dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="50"
+                android:background="@drawable/rounded_corner"
+                android:text="Random \nQuiz"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
-                <LinearLayout
-                    android:id="@+id/categoryll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </ScrollView>
+            <Button
+                android:id="@+id/vocabImageview"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="50"
+                android:background="@drawable/rounded_corner"
+                android:text=" English \nvocabulary"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:padding="5dp"
+                android:paddingStart="5dp"
+                android:text="Categories For Quizzes"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/categoryll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
     </LinearLayout>
-
-
-</LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

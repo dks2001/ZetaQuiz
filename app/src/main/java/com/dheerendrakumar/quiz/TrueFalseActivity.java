@@ -1,20 +1,29 @@
 package com.dheerendrakumar.quiz;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.animation.Animator;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.models.PieModel;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -22,19 +31,21 @@ import java.util.Collections;
 
 public class TrueFalseActivity extends AppCompatActivity {
 
+    PieChart pieChart;
     ArrayList<String> questions;
     ArrayList<String> correctAnswers;
     ArrayList<ArrayList<String>> incorrectAnswers;
     ArrayList<String> icAnswers;
     LinearLayout linearLayout;
     LinearLayout mainLinearLayout;
-    SecureRandom secureRandom;
     int score=0;
     int numberOfQuestions=0;
+    int qn=1;
 
     Handler handler;
     TextView textView;
     TextView scoreTextview;
+    TextView questionNumber;
     Animator animator;
     int totalScore=0;
 
@@ -43,12 +54,19 @@ public class TrueFalseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_true_false);
 
+        ProgressDialog progress = new ProgressDialog(TrueFalseActivity.this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
+        handler = new Handler();
         textView = findViewById(R.id.Dailytruefalsequestion);
         linearLayout = findViewById(R.id.DailytruefalseLinearLayout);
         mainLinearLayout = findViewById(R.id.DailymainTFLinearLayout);
-        scoreTextview = findViewById(R.id.DailytruefalseScore);
-        secureRandom = new SecureRandom();
-        handler = new Handler();
+        scoreTextview = findViewById(R.id.score);
+        questionNumber = findViewById(R.id.questionNumber);
+
 
         Intent intent = getIntent();
         questions = intent.getStringArrayListExtra("questionTexts");
@@ -56,24 +74,33 @@ public class TrueFalseActivity extends AppCompatActivity {
         Bundle args = intent.getBundleExtra("BUNDLE");
         numberOfQuestions = Integer.valueOf(intent.getStringExtra("numberOfQuestions"));
         incorrectAnswers = (ArrayList<ArrayList<String>>) args.getSerializable("ARRAYLIST");
-        icAnswers = incorrectAnswers.get(0);
-        icAnswers.add(correctAnswers.get(0));
-        Collections.shuffle(icAnswers);
 
-        textView.setText(questions.get(0));
 
-         for(int j=0;j<linearLayout.getChildCount();j++) {
-             Button icAns = (Button) linearLayout.getChildAt(j);
-             if(icAns.getText().equals("")) {
-                 icAns.setText(icAnswers.get(j));
-             }
-         }
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                questionNumber.setText("Question Number : "+qn);
+                icAnswers = incorrectAnswers.get(0);
+                icAnswers.add(correctAnswers.get(0));
+                Collections.shuffle(icAnswers);
+                textView.setText(questions.get(0));
 
-         for(int i=0;i<linearLayout.getChildCount();i++) {
-             Button btn = (Button) linearLayout.getChildAt(i);
-             btn.setOnClickListener(btnGuessListener);
-             btn.setTextSize(24);
-         }
+                for(int j=0;j<linearLayout.getChildCount();j++) {
+                    Button icAns = (Button) linearLayout.getChildAt(j);
+                    if(icAns.getText().equals("")) {
+                        icAns.setText(icAnswers.get(j));
+                    }
+                }
+
+                for(int i=0;i<linearLayout.getChildCount();i++) {
+                    Button btn = (Button) linearLayout.getChildAt(i);
+                    btn.setOnClickListener(btnGuessListener);
+                    btn.setTextSize(24);
+                }
+                progress.dismiss();
+            }
+        },3000);
+
 
     }
 
@@ -90,7 +117,7 @@ public class TrueFalseActivity extends AppCompatActivity {
                 score++;
                 scoreTextview.setText(score+" / "+numberOfQuestions);
                 disableAllQuizButtons(false);
-                btnGuess.setBackgroundColor(Color.GREEN);
+                btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
                 Toast.makeText(TrueFalseActivity.this, "right", Toast.LENGTH_SHORT).show();
 
                 questions.remove(0);
@@ -100,19 +127,7 @@ public class TrueFalseActivity extends AppCompatActivity {
 
                 if(totalScore==numberOfQuestions) {
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(TrueFalseActivity.this);
-                    builder.setCancelable(false);
-
-
-                    builder.setMessage(String.valueOf(score) + "/" + numberOfQuestions);
-                    builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-
-                    builder.show();
+                    showPopup(view);
 
                 }
                 else{
@@ -125,25 +140,30 @@ public class TrueFalseActivity extends AppCompatActivity {
                 }
             } else {
                 totalScore++;
-                btnGuess.setBackgroundColor(Color.RED);
-                disableAllQuizButtons(true);
+                btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.wrong_button,null));
+                disableAllQuizButtons(false);
                 questions.remove(0);
                 icAnswers = new ArrayList<>();
                 incorrectAnswers.remove(0);
                 correctAnswers.remove(0);
 
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animateAnimalQuiz(true);
-                    }
-                }, 1000);
+                if(totalScore==numberOfQuestions) {
+                    showPopup(view);
+                } else {
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            animateAnimalQuiz(true);
+                        }
+                    }, 1000);
+                }
             }
         }
     };
 
 
-    private void animateAnimalQuiz(boolean animateOutAnimalImage) {
+    private void animateAnimalQuiz(boolean animateQuiz) {
 
         int xTopLeft = 0;
         int yTopLeft = 0;
@@ -155,7 +175,7 @@ public class TrueFalseActivity extends AppCompatActivity {
 
 
 
-        if(animateOutAnimalImage) {
+        if(animateQuiz) {
 
             animator = ViewAnimationUtils.createCircularReveal(mainLinearLayout,xBottomRight,yBottomRight,radius,0);
 
@@ -191,6 +211,8 @@ public class TrueFalseActivity extends AppCompatActivity {
 
     public void showNextQuestion() {
 
+        qn++;
+        questionNumber.setText("Question Number : "+qn);
         textView.setText(questions.get(0));
         icAnswers = incorrectAnswers.get(0);
         icAnswers.add(correctAnswers.get(0));
@@ -198,7 +220,7 @@ public class TrueFalseActivity extends AppCompatActivity {
 
         for(int i=0;i<linearLayout.getChildCount();i++) {
             Button btn = (Button) linearLayout.getChildAt(i);
-            btn.setBackgroundColor(getColor(R.color.buttoncolor));
+            btn.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.truefalsebutton_corner,null));
         }
 
         for(int j=0;j<linearLayout.getChildCount();j++) {
@@ -216,5 +238,52 @@ public class TrueFalseActivity extends AppCompatActivity {
             Button btn = (Button) linearLayout.getChildAt(i);
             btn.setEnabled(isEnable);
         }
+    }
+
+    public void showPopup(View view) {
+
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.popup_window, null);
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = false; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        TextView totalQuestionPopup = (TextView)popupView.findViewById(R.id.totalQuestionPopup);
+        totalQuestionPopup.setText("Total Question : "+numberOfQuestions);
+        TextView attempted = (TextView) popupView.findViewById(R.id.attemptedPopup);
+        attempted.setText("Attempted : "+numberOfQuestions);
+        TextView correct = (TextView) popupView.findViewById(R.id.correctpopup);
+        correct.setText("Correct : "+score);
+        TextView incorrect = (TextView)popupView.findViewById(R.id.incorrectpopup);
+        incorrect.setText("Incorrect : "+(numberOfQuestions-score));
+        TextView scoree = (TextView) popupView.findViewById(R.id.scorepopup);
+        scoree.setText("Score : "+score+" / "+numberOfQuestions);
+
+        pieChart = (PieChart)popupView.findViewById(R.id.piechart);
+        pieChart.addPieSlice(
+                new PieModel(
+                        "Correct",
+                        score,
+                        Color.parseColor("#00FF00")));
+        pieChart.addPieSlice(
+                new PieModel(
+                        "Incorrect",
+                        numberOfQuestions-score,
+                        Color.parseColor("#FF0000")));
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        pieChart.startAnimation();
+
+        Button finish = (Button) popupView.findViewById(R.id.finishpopup);
+        finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TrueFalseActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
