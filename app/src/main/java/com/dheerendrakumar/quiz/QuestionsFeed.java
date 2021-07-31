@@ -182,6 +182,7 @@ public class QuestionsFeed extends AppCompatActivity {
 
                             likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_empty, null));
                             //like = false;
+                            likePost.setTag("unliked");
 
 
                             db.collection("user").document(mAuth.getUid())
