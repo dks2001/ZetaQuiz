@@ -8,9 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,14 +32,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
 
 public class LauncherActivity extends AppCompatActivity {
 
@@ -66,6 +66,13 @@ public class LauncherActivity extends AppCompatActivity {
         signinButton = findViewById(R.id.signinButton);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
+        TextView forgotPassword = findViewById(R.id.forgotPasswordtextView);
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetPassword();
+            }
+        });
 
 
 
@@ -74,11 +81,6 @@ public class LauncherActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                ProgressDialog progress = new ProgressDialog(LauncherActivity.this);
-                progress.setTitle("Loading");
-                progress.setMessage("Wait while loading...");
-                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-                progress.show();
 
                     if (signinButton.getText().equals("sign in")) {
 
@@ -88,6 +90,12 @@ public class LauncherActivity extends AppCompatActivity {
                         } else if(passwordEditText.getText().toString().equals("")) {
                             Toast.makeText(LauncherActivity.this, "password cannot be empty", Toast.LENGTH_SHORT).show();
                         } else {
+
+                            ProgressDialog progress = new ProgressDialog(LauncherActivity.this);
+                            progress.setTitle("Loading");
+                            progress.setMessage("Wait while loading...");
+                            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                            progress.show();
 
 
                             mAuth.signInWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
@@ -122,6 +130,12 @@ public class LauncherActivity extends AppCompatActivity {
                         } else if (passwordEditText.getText().toString().equals("")) {
                             Toast.makeText(LauncherActivity.this, "password cannot be empty", Toast.LENGTH_SHORT).show();
                         } else {
+
+                            ProgressDialog progress = new ProgressDialog(LauncherActivity.this);
+                            progress.setTitle("Loading");
+                            progress.setMessage("Wait while loading...");
+                            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                            progress.show();
 
 
                             mAuth.createUserWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
@@ -273,6 +287,58 @@ public class LauncherActivity extends AppCompatActivity {
                         Log.w("", "Error writing document", e);
                     }
                 });
+    }
+
+    public void resetPassword() {
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View forgetPasswordView = layoutInflater.inflate(R.layout.forgot_password,null);
+
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+
+        boolean focusable = true;
+        PopupWindow popupWindow = new PopupWindow(forgetPasswordView,width,height,focusable);
+
+        EditText emailForPassword = (EditText) forgetPasswordView.findViewById(R.id.forgotpasswordEmail);
+        Button cancel = (Button) forgetPasswordView.findViewById(R.id.cancelPasswordChange);
+        Button confirm = (Button) forgetPasswordView.findViewById(R.id.confirmPasswordChange);
+
+        popupWindow.showAtLocation(forgetPasswordView, Gravity.CENTER,0,0);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(emailForPassword.getText().toString().equals("")) {
+                    Toast.makeText(LauncherActivity.this, "Enter your email id.", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                    String emailAddress = emailForPassword.getText().toString();
+
+                    firebaseAuth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(LauncherActivity.this, "Password reset email send to the " + emailAddress, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(LauncherActivity.this, "Something went wrong. Please Try again later.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+
+            }
+        });
     }
 
 }

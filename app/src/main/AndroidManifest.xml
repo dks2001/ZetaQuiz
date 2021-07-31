@@ -12,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Quiz">
+        <activity android:name=".AllUserComments"></activity>
+        <activity android:name=".QuestionsFeed" />
         <activity android:name=".VocabQuizActivity" />
         <activity android:name=".VocabularyActivity" />
         <activity android:name=".MainActivity" />

@@ -11,6 +11,7 @@
         android:id="@+id/vocabmainLiearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#BA55D3"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +22,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_weight="40"
+            android:background="@drawable/textview_corner"
             android:orientation="vertical">
 
 
@@ -51,8 +57,6 @@
         </LinearLayout>
 
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -64,61 +68,69 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
+                android:background="@drawable/textview_corner"
                 android:gravity="center"
+                android:padding="10dp"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/vocabbuttonLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_weight="80"
-            android:orientation="vertical">
+            android:background="@drawable/textview_corner"
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <Button
                 android:id="@+id/button2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 tools:visibility="visible" />
 
             <Button
                 android:id="@+id/button3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 tools:visibility="visible" />
 
             <Button
                 android:id="@+id/button4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 tools:visibility="visible" />
 
             <Button
                 android:id="@+id/button5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_margin="5dp"
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 tools:visibility="visible" />
         </LinearLayout>
 

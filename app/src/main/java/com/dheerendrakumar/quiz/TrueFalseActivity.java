@@ -115,7 +115,7 @@ public class TrueFalseActivity extends AppCompatActivity {
             if(guessValue.equals(correctAnswers.get(0))) {
                 totalScore++;
                 score++;
-                scoreTextview.setText(score+" / "+numberOfQuestions);
+                scoreTextview.setText("Score : "+score+" / "+numberOfQuestions);
                 disableAllQuizButtons(false);
                 btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
                 Toast.makeText(TrueFalseActivity.this, "right", Toast.LENGTH_SHORT).show();
@@ -131,7 +131,7 @@ public class TrueFalseActivity extends AppCompatActivity {
 
                 }
                 else{
-                    handler.postDelayed(new Runnable() {
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             animateAnimalQuiz(true);
@@ -139,21 +139,30 @@ public class TrueFalseActivity extends AppCompatActivity {
                     }, 1000);
                 }
             } else {
+
+                for(int j=0;j<linearLayout.getChildCount();j++) {
+                    Button btn = (Button) linearLayout.getChildAt(j);
+                    if(btn.getText().toString().equals(correctAnswers.get(0))) {
+                        btn.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
+                    }
+                }
+
                 totalScore++;
                 btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.wrong_button,null));
                 disableAllQuizButtons(false);
-                questions.remove(0);
-                icAnswers = new ArrayList<>();
-                incorrectAnswers.remove(0);
-                correctAnswers.remove(0);
+
 
                 if(totalScore==numberOfQuestions) {
                     showPopup(view);
                 } else {
 
-                    handler.postDelayed(new Runnable() {
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            questions.remove(0);
+                            icAnswers = new ArrayList<>();
+                            incorrectAnswers.remove(0);
+                            correctAnswers.remove(0);
                             animateAnimalQuiz(true);
                         }
                     }, 1000);
@@ -172,7 +181,6 @@ public class TrueFalseActivity extends AppCompatActivity {
         int yBottomRight = mainLinearLayout.getTop() + mainLinearLayout.getBottom();
 
         int radius = Math.max(mainLinearLayout.getWidth(),mainLinearLayout.getHeight());
-
 
 
         if(animateQuiz) {
@@ -242,48 +250,53 @@ public class TrueFalseActivity extends AppCompatActivity {
 
     public void showPopup(View view) {
 
-
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.popup_window, null);
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = false; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        TextView totalQuestionPopup = (TextView)popupView.findViewById(R.id.totalQuestionPopup);
-        totalQuestionPopup.setText("Total Question : "+numberOfQuestions);
-        TextView attempted = (TextView) popupView.findViewById(R.id.attemptedPopup);
-        attempted.setText("Attempted : "+numberOfQuestions);
-        TextView correct = (TextView) popupView.findViewById(R.id.correctpopup);
-        correct.setText("Correct : "+score);
-        TextView incorrect = (TextView)popupView.findViewById(R.id.incorrectpopup);
-        incorrect.setText("Incorrect : "+(numberOfQuestions-score));
-        TextView scoree = (TextView) popupView.findViewById(R.id.scorepopup);
-        scoree.setText("Score : "+score+" / "+numberOfQuestions);
-
-        pieChart = (PieChart)popupView.findViewById(R.id.piechart);
-        pieChart.addPieSlice(
-                new PieModel(
-                        "Correct",
-                        score,
-                        Color.parseColor("#00FF00")));
-        pieChart.addPieSlice(
-                new PieModel(
-                        "Incorrect",
-                        numberOfQuestions-score,
-                        Color.parseColor("#FF0000")));
-
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-        pieChart.startAnimation();
-
-        Button finish = (Button) popupView.findViewById(R.id.finishpopup);
-        finish.setOnClickListener(new View.OnClickListener() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TrueFalseActivity.this,MainActivity.class);
-                startActivity(intent);
+            public void run() {
+                LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = layoutInflater.inflate(R.layout.popup_window, null);
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = false; // lets taps outside the popup also dismiss it
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                TextView totalQuestionPopup = (TextView)popupView.findViewById(R.id.totalQuestionPopup);
+                totalQuestionPopup.setText("Total Question : "+numberOfQuestions);
+                TextView attempted = (TextView) popupView.findViewById(R.id.attemptedPopup);
+                attempted.setText("Attempted : "+numberOfQuestions);
+                TextView correct = (TextView) popupView.findViewById(R.id.correctpopup);
+                correct.setText("Correct : "+score);
+                TextView incorrect = (TextView)popupView.findViewById(R.id.incorrectpopup);
+                incorrect.setText("Incorrect : "+(numberOfQuestions-score));
+                TextView scoree = (TextView) popupView.findViewById(R.id.scorepopup);
+                scoree.setText("Score : "+score+" / "+numberOfQuestions);
+
+                pieChart = (PieChart)popupView.findViewById(R.id.piechart);
+                pieChart.addPieSlice(
+                        new PieModel(
+                                "Correct",
+                                score,
+                                Color.parseColor("#00FF00")));
+                pieChart.addPieSlice(
+                        new PieModel(
+                                "Incorrect",
+                                numberOfQuestions-score,
+                                Color.parseColor("#FF0000")));
+
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+                pieChart.startAnimation();
+
+                Button finish = (Button) popupView.findViewById(R.id.finishpopup);
+                finish.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(TrueFalseActivity.this,MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
-        });
+        },1000);
 
     }
 }

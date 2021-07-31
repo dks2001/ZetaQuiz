@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:clickable="true"
+            app:civ_border_width="3dp"
+            app:civ_border_color="#FFFFFFFF"
+            android:id="@+id/userCommentProfile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="5dp"
+            android:elevation="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profileicon" />
+
+        <TextView
+            android:id="@+id/UserCommentName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textStyle="bold"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="username" />
+
+        <TextView
+            android:id="@+id/userComments"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_height="match_parent"
+            android:padding="10dp"/>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

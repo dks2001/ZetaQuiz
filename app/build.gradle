@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.dheerendrakumar.quiz"
-        minSdkVersion 23
+        minSdkVersion 27
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -49,6 +49,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.github.KwabenBerko:News-API-Java:1.0.0'
+
+    implementation 'com.mikhaellopez:circularimageview:4.3.0'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+
+
 
 
 // For Card view

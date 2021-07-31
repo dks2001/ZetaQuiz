@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -48,7 +49,6 @@ import java.util.Locale;
 
 public class DailyQuizActivity extends AppCompatActivity {
 
-    Handler handler;
     PieChart pieChart;
     int qn=1;
     TextView textView;
@@ -73,7 +73,6 @@ public class DailyQuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_quiz);
 
-        handler = new Handler();
         textView = findViewById(R.id.Dailytruefalsequestion);
         scoreTextview = findViewById(R.id.score);
         questionNumber = findViewById(R.id.questionNumber);
@@ -90,7 +89,7 @@ public class DailyQuizActivity extends AppCompatActivity {
             getData(url);
         }
 
-        handler.postDelayed(new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
 
@@ -133,7 +132,7 @@ public class DailyQuizActivity extends AppCompatActivity {
                 btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
                 totalScore++;
                 score++;
-                scoreTextview.setText("Score : "+score);
+                scoreTextview.setText("Score : "+score+" / "+numberOfQuestions);
                 disableAllQuizButtons(false);
 
 
@@ -150,7 +149,7 @@ public class DailyQuizActivity extends AppCompatActivity {
                     showPopup(view);
                 }
                 else{
-                    handler.postDelayed(new Runnable() {
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             animateAnimalQuiz(true);
@@ -158,21 +157,30 @@ public class DailyQuizActivity extends AppCompatActivity {
                     }, 1000);
                 }
             } else {
+
+                for(int j=0;j<linearLayout.getChildCount();j++) {
+                    Button btn = (Button) linearLayout.getChildAt(j);
+                    if(btn.getText().toString().equals(correctAnswer.get(0))) {
+                        btn.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
+                    }
+                }
+
                 totalScore++;
                 btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.wrong_button,null));
                 disableAllQuizButtons(false);
-                questionTexts.remove(0);
-                icAnswers = new ArrayList<>();
-                incorrectAnswers.remove(0);
-                correctAnswer.remove(0);
+
 
                 if(totalScore==numberOfQuestions) {
                     showPopup(view);
                 } else {
 
-                    handler.postDelayed(new Runnable() {
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            questionTexts.remove(0);
+                            icAnswers = new ArrayList<>();
+                            incorrectAnswers.remove(0);
+                            correctAnswer.remove(0);
                             animateAnimalQuiz(true);
                         }
                     }, 1000);
@@ -326,47 +334,55 @@ public class DailyQuizActivity extends AppCompatActivity {
     public void showPopup(View view) {
 
 
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.popup_window, null);
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = false; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        TextView totalQuestionPopup = (TextView)popupView.findViewById(R.id.totalQuestionPopup);
-        totalQuestionPopup.setText("Total Question : "+10);
-        TextView attempted = (TextView) popupView.findViewById(R.id.attemptedPopup);
-        attempted.setText("Attempted : "+10);
-        TextView correct = (TextView) popupView.findViewById(R.id.correctpopup);
-        correct.setText("Correct : "+score);
-        TextView incorrect = (TextView)popupView.findViewById(R.id.incorrectpopup);
-        incorrect.setText("Incorrect : "+(numberOfQuestions-score));
-        TextView scoree = (TextView) popupView.findViewById(R.id.scorepopup);
-        scoree.setText("Score : "+score+" / "+numberOfQuestions);
-
-        pieChart = (PieChart)popupView.findViewById(R.id.piechart);
-        pieChart.addPieSlice(
-                new PieModel(
-                        "Correct",
-                        score,
-                        Color.parseColor("#00FF00")));
-        pieChart.addPieSlice(
-                new PieModel(
-                        "Incorrect",
-                        numberOfQuestions-score,
-                        Color.parseColor("#FF0000")));
-
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-        pieChart.startAnimation();
-
-        Button finish = (Button) popupView.findViewById(R.id.finishpopup);
-        finish.setOnClickListener(new View.OnClickListener() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DailyQuizActivity.this,MainActivity.class);
-                startActivity(intent);
+            public void run() {
+                LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = layoutInflater.inflate(R.layout.popup_window, null);
+                int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+                int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+                boolean focusable = false; // lets taps outside the popup also dismiss it
+                final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+                TextView totalQuestionPopup = (TextView)popupView.findViewById(R.id.totalQuestionPopup);
+                totalQuestionPopup.setText("Total Question : "+10);
+                TextView attempted = (TextView) popupView.findViewById(R.id.attemptedPopup);
+                attempted.setText("Attempted : "+10);
+                TextView correct = (TextView) popupView.findViewById(R.id.correctpopup);
+                correct.setText("Correct : "+score);
+                TextView incorrect = (TextView)popupView.findViewById(R.id.incorrectpopup);
+                incorrect.setText("Incorrect : "+(numberOfQuestions-score));
+                TextView scoree = (TextView) popupView.findViewById(R.id.scorepopup);
+                scoree.setText("Score : "+score+" / "+numberOfQuestions);
+
+                pieChart = (PieChart)popupView.findViewById(R.id.piechart);
+                pieChart.addPieSlice(
+                        new PieModel(
+                                "Correct",
+                                score,
+                                Color.parseColor("#00FF00")));
+                pieChart.addPieSlice(
+                        new PieModel(
+                                "Incorrect",
+                                numberOfQuestions-score,
+                                Color.parseColor("#FF0000")));
+
+                popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+                pieChart.startAnimation();
+
+                Button finish = (Button) popupView.findViewById(R.id.finishpopup);
+                finish.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(DailyQuizActivity.this,MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
-        });
+        },1000);
+
+
 
     }
 }

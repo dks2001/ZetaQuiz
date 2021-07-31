@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.animation.Animator;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -110,6 +111,12 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
             @Override
             public void onClick(View v) {
 
+                ProgressDialog progress = new ProgressDialog(SpecificationsActivity.this);
+                progress.setTitle("Loading");
+                progress.setMessage("Wait while loading...");
+                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progress.show();
+
                 String numberOfQuestions = spinner.getSelectedItem().toString();
                 String difficultyLevel = dlSpiiner.getSelectedItem().toString();
                 String type = toq.getSelectedItem().toString();
@@ -130,6 +137,7 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
                         public void run() {
                             if(questionTexts.size()==0) {
                                 Toast.makeText(SpecificationsActivity.this, "Questions not available.Please change your specifications.", Toast.LENGTH_LONG).show();
+                                progress.dismiss();
                             } else if(type.equals("Multiple Choice")) {
                                 Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(SpecificationsActivity.this,QuizActivity.class);
@@ -140,6 +148,7 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
                                 intent.putExtra("BUNDLE",args);
                                 intent.putExtra("numberOfQuestions",numberOfQuestions);
                                 startActivity(intent);
+                                progress.dismiss();
                             } else {
 
                                 Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
@@ -151,6 +160,7 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
                                 intent.putExtra("BUNDLE",args);
                                 intent.putExtra("numberOfQuestions",numberOfQuestions);
                                 startActivity(intent);
+                                progress.dismiss();
 
                             }
                         }
