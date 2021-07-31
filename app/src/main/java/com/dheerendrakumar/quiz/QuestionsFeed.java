@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -56,7 +57,7 @@ public class QuestionsFeed extends AppCompatActivity {
     ArrayList<String> question = new ArrayList<>();
     String imageUrll="";
 
-    Boolean[] like;
+    boolean like;
     String userName="";
     FirebaseAuth mAuth;
 
@@ -85,8 +86,6 @@ public class QuestionsFeed extends AppCompatActivity {
         question = intent.getStringArrayListExtra("questions");
         imageUrll = intent.getStringExtra("imageUrll");
         userName = intent.getStringExtra("username");
-        like = new Boolean[name.size()];
-        Arrays.fill(like, Boolean.FALSE);
 
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -125,21 +124,17 @@ public class QuestionsFeed extends AppCompatActivity {
             questionShared.setText(question.get(i));
 
             questionsLinearLayout.addView(questionTemplate);
-
-            for(int l=0;l<like.length;l++) {
-
-                final int m = l;
+            like = false;
 
                 likePost.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
 
-                        if (like[m] == Boolean.FALSE) {
+                        if (likePost.getTag().toString().equals("unliked")) {
                             likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_filled, null));
-                            like[m] = Boolean.TRUE;
 
-
+                            likePost.setTag("liked");
                             db.collection("user").document(mAuth.getUid())
                                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
@@ -186,7 +181,7 @@ public class QuestionsFeed extends AppCompatActivity {
                         } else {
 
                             likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_empty, null));
-                            like[m] = Boolean.FALSE;
+                            //like = false;
 
 
                             db.collection("user").document(mAuth.getUid())
@@ -221,7 +216,6 @@ public class QuestionsFeed extends AppCompatActivity {
 
 
                 });
-            }
 
             comments.setOnClickListener(new View.OnClickListener() {
                 @Override
