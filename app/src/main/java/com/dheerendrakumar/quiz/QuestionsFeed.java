@@ -5,7 +5,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,11 +58,16 @@ public class QuestionsFeed extends AppCompatActivity {
     ArrayList<String> imageUrl = new ArrayList<>();
     ArrayList<String> name = new ArrayList<>();
     ArrayList<String> question = new ArrayList<>();
+    ArrayList<String> likedQuestions = new ArrayList<>();
+    ArrayList<String> numberOfLikes = new ArrayList<>();
+    ArrayList<String> numberOfComments = new ArrayList<>();
     String imageUrll="";
+   // ProgressDialog progress;
 
-    boolean like;
     String userName="";
-    FirebaseAuth mAuth;
+   // FirebaseAuth mAuth;
+
+    RecyclerView allQuestionsRecyclerView;
 
 
 
@@ -69,16 +77,23 @@ public class QuestionsFeed extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questions_feed);
 
-        mAuth = FirebaseAuth.getInstance();
+      //  mAuth = FirebaseAuth.getInstance();
+
+       /* progress = new ProgressDialog(QuestionsFeed.this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show(); */
 
 
-        if (android.os.Build.VERSION.SDK_INT > 9) {
+
+     /*   if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
 
-        questionsLinearLayout = findViewById(R.id.questionsLinearLayout);
-        db = FirebaseFirestore.getInstance();
+        //questionsLinearLayout = findViewById(R.id.questionsLinearLayout);
+        db = FirebaseFirestore.getInstance(); */
 
         Intent intent = getIntent();
         name = intent.getStringArrayListExtra("UserNames");
@@ -86,27 +101,35 @@ public class QuestionsFeed extends AppCompatActivity {
         question = intent.getStringArrayListExtra("questions");
         imageUrll = intent.getStringExtra("imageUrll");
         userName = intent.getStringExtra("username");
+        likedQuestions = intent.getStringArrayListExtra("likedQuestions");
+        numberOfComments = intent.getStringArrayListExtra("numOfComments");
+        numberOfLikes = intent.getStringArrayListExtra("numOfLikes");
+
+        allQuestionsRecyclerView = findViewById(R.id.AllQuestionsRecyclerView);
+        allQuestionsRecyclerView.setNestedScrollingEnabled(false);
+        allQuestionsRecyclerView.setAdapter(new QuestionRecyclerAdapter(QuestionsFeed.this, imageUrl,name,question,likedQuestions,imageUrll,userName,numberOfLikes,numberOfComments));
+        allQuestionsRecyclerView.setLayoutManager(new LinearLayoutManager(QuestionsFeed.this));
 
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+      /*  new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 setQuestions();
 
             }
-        },1000);
+        },1000); */
 
     }
 
-    public void setQuestions() {
+    /*  public void setQuestions() {
+
 
         for(int i=0;i<name.size();i++) {
 
-            final  int k = i;
+            final int k = i;
 
             LinearLayout questionTemplate = (LinearLayout) this.getLayoutInflater().inflate(R.layout.question_template, null);
-
             ImageView profile = questionTemplate.findViewById(R.id.UserNameProfilePic);
             TextView username = questionTemplate.findViewById(R.id.usernameSharedBy);
             TextView questionShared = questionTemplate.findViewById(R.id.questionShared);
@@ -114,88 +137,69 @@ public class QuestionsFeed extends AppCompatActivity {
             ImageView comments = (ImageView) questionTemplate.findViewById(R.id.comments);
             ImageView deletePost = (ImageView) questionTemplate.findViewById(R.id.deleteQuestion);
 
-            if(imageUrl.get(i).equals("null")) {
+
+            if (imageUrl.get(k).equals("null")) {
                 profile.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.profileicon, null));
 
             } else {
-                profile.setImageBitmap(getBitmapFromURL(imageUrl.get(i)));
+                profile.setImageBitmap(getBitmapFromURL(imageUrl.get(k)));
             }
-            username.setText(name.get(i));
-            questionShared.setText(question.get(i));
+            username.setText(name.get(k));
+            questionShared.setText(question.get(k));
+
+
+            if(likedQuestions != null) {
+
+                for(int s=0;s<likedQuestions.size();s++) {
+                    if(question.get(k).equals(likedQuestions.get(s))) {
+                        likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_filled, null));
+                        likePost.setTag("liked");
+                    }
+                }
+
+            }
+
 
             questionsLinearLayout.addView(questionTemplate);
-            like = false;
-
-                likePost.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-
-                        if (likePost.getTag().toString().equals("unliked")) {
-                            likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_filled, null));
-
-                            likePost.setTag("liked");
-                            db.collection("user").document(mAuth.getUid())
-                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                                    DocumentSnapshot document = task.getResult();
-                                    HashMap<String, Object> user = (HashMap<String, Object>) document.getData();
 
 
-                                    ArrayList<String> likedPosts = (ArrayList<String>) document.get("likedPosts");
+            likePost.setOnClickListener(new View.OnClickListener() {
 
-                                    if (likedPosts == null) {
+                @Override
+                public void onClick(View v) {
 
-                                        ArrayList<String> res = new ArrayList<String>();
-                                        res.add(question.get(k));
+                    if (likePost.getTag().toString().equals("unliked")) {
+                        likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_filled, null));
 
-                                        user.put("likedPosts", res);
+                        likePost.setTag("liked");
+                        db.collection("user").document(mAuth.getUid())
+                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                                        db.collection("user").document(mAuth.getUid())
-                                                .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(QuestionsFeed.this, "liked", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-
-                                    } else {
-                                        likedPosts.add(question.get(k));
-
-                                        user.put("likedPosts", likedPosts);
-
-                                        db.collection("user").document(mAuth.getUid())
-                                                .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(QuestionsFeed.this, "liked", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }
-
-                                }
-                            });
-
-                        } else {
-
-                            likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_empty, null));
-                            //like = false;
-                            likePost.setTag("unliked");
+                                DocumentSnapshot document = task.getResult();
+                                HashMap<String, Object> user = (HashMap<String, Object>) document.getData();
 
 
-                            db.collection("user").document(mAuth.getUid())
-                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                ArrayList<String> likedPosts = (ArrayList<String>) document.get("likedPosts");
 
-                                    DocumentSnapshot document = task.getResult();
-                                    HashMap<String, Object> user = (HashMap<String, Object>) document.getData();
+                                if (likedPosts == null) {
 
+                                    ArrayList<String> res = new ArrayList<String>();
+                                    res.add(question.get(k));
 
-                                    ArrayList<String> likedPosts = (ArrayList<String>) document.get("likedPosts");
-                                    likedPosts.remove(question.get(k));
+                                    user.put("likedPosts", res);
+
+                                    db.collection("user").document(mAuth.getUid())
+                                            .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(QuestionsFeed.this, "liked", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                } else {
+                                    likedPosts.add(question.get(k));
 
                                     user.put("likedPosts", likedPosts);
 
@@ -203,20 +207,53 @@ public class QuestionsFeed extends AppCompatActivity {
                                             .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(QuestionsFeed.this, "unliked", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(QuestionsFeed.this, "liked", Toast.LENGTH_SHORT).show();
                                         }
                                     });
-
                                 }
-                            });
+
+                            }
+                        });
+
+                    } else {
+
+                        likePost.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.like_empty, null));
+                        //like = false;
+                        likePost.setTag("unliked");
 
 
-                        }
+                        db.collection("user").document(mAuth.getUid())
+                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                DocumentSnapshot document = task.getResult();
+                                HashMap<String, Object> user = (HashMap<String, Object>) document.getData();
+
+
+                                ArrayList<String> likedPosts = (ArrayList<String>) document.get("likedPosts");
+                                likedPosts.remove(question.get(k));
+
+                                user.put("likedPosts", likedPosts);
+
+                                db.collection("user").document(mAuth.getUid())
+                                        .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(QuestionsFeed.this, "unliked", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        });
+
 
                     }
 
+                }
 
-                });
+
+            });
 
             comments.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -284,10 +321,15 @@ public class QuestionsFeed extends AppCompatActivity {
 
 
 
-        }
-    }
 
-    public static Bitmap getBitmapFromURL(String src) {
+            progress.dismiss();
+        }
+
+
+
+    } */
+
+   /* public static Bitmap getBitmapFromURL(String src) {
         try {
             Log.e("src", src);
             URL url = new URL(src);
@@ -303,7 +345,7 @@ public class QuestionsFeed extends AppCompatActivity {
             Log.e("Exception", e.getMessage());
             return null;
         }
-    }
+    } */
 
 }
 

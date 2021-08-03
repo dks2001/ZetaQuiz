@@ -1,5 +1,6 @@
 package com.dheerendrakumar.quiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -22,12 +23,19 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.PieModel;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class VocabQuizActivity extends AppCompatActivity {
 
@@ -48,11 +56,17 @@ public class VocabQuizActivity extends AppCompatActivity {
     int totalscore=0;
     int qn=1;
     TextView questionNumber;
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
+    int level=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vocab_quiz);
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         ProgressDialog progress = new ProgressDialog(VocabQuizActivity.this);
         progress.setTitle("Loading");
@@ -70,6 +84,7 @@ public class VocabQuizActivity extends AppCompatActivity {
         handler = new Handler();
 
         Intent intent = getIntent();
+        level = intent.getIntExtra("level",0);
         questions = intent.getStringArrayListExtra("questionTexts");
         correctAnswers = intent.getStringArrayListExtra("correctAnswer");
         Bundle args = intent.getBundleExtra("BUNDLE");
@@ -287,10 +302,67 @@ public class VocabQuizActivity extends AppCompatActivity {
                 popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
                 pieChart.startAnimation();
 
+                db.collection("user").document(mAuth.getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot documentSnapshot = task.getResult();
+
+                            HashMap<String,Object> user = (HashMap<String, Object>) documentSnapshot.getData();
+
+                            ArrayList<String> scores = (ArrayList<String>) documentSnapshot.get("scores");
+
+                            if(scores==null) {
+
+                                ArrayList<String> AllScores = new ArrayList<String>(15);
+
+                                for(int i=0;i<15;i++) {
+                                    if(i==0) {
+                                        AllScores.add(0,score+"/"+numberOfQuestions);
+                                    } else {
+                                        AllScores.add("0.0");
+                                    }
+                                }
+
+                                user.put("scores",AllScores);
+
+
+                                db.collection("user").document(mAuth.getUid())
+                                        .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(VocabQuizActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+
+                                scores.remove(level);
+                                scores.add(level,score+"/"+numberOfQuestions);
+
+                                user.put("scores",scores);
+
+                                db.collection("user").document(mAuth.getUid())
+                                        .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(VocabQuizActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+                            }
+                        }
+                    }
+                });
+
+
+
                 Button finish = (Button) popupView.findViewById(R.id.finishpopup);
                 finish.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        popupWindow.dismiss();
                         Intent intent = new Intent(VocabQuizActivity.this,VocabularyActivity.class);
                         startActivity(intent);
                         finish();
@@ -298,7 +370,6 @@ public class VocabQuizActivity extends AppCompatActivity {
                 });
             }
         },1000);
-
 
 
     }

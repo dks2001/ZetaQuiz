@@ -30,6 +30,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firestore.v1.WriteResult;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,8 +39,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.dheerendrakumar.quiz.MainActivity.getBitmapFromURL;
 
 public class AllUserComments extends AppCompatActivity {
 
@@ -116,7 +115,7 @@ public class AllUserComments extends AppCompatActivity {
 
                         for(String key : comments.keySet()) {
 
-                            if(!key.equals("SharedBy")) {
+                            if(!key.equals("SharedBy") && !key.equals("numberOfLikes") && !key.equals("numberOfComments")) {
 
                                 ArrayList<String> userComment = (ArrayList<String>) document.get(key);
 
@@ -128,7 +127,7 @@ public class AllUserComments extends AppCompatActivity {
                                 }
                                 AllComments.add(myComment);
 
-                            } else {
+                            } else if(key.equals("SharedBy")) {
 
                                 ArrayList<String> userComment = (ArrayList<String>) document.get(key);
                                  myName = userComment.get(0);
@@ -174,7 +173,8 @@ public class AllUserComments extends AppCompatActivity {
                 TextView comm = questionTemplate.findViewById(R.id.userComments);
 
                 if(!imageUrl.get(i).equals("null")) {
-                    profile.setImageBitmap(getBitmapFromURL(imageUrl.get(i)));
+                   // profile.setImageBitmap(getBitmapFromURL(imageUrl.get(i)));
+                    Picasso.with(AllUserComments.this).load(imageUrl.get(i)).into(profile);
                 } else {
                     profile.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.profileicon, null));
                 }
@@ -208,11 +208,13 @@ public class AllUserComments extends AppCompatActivity {
                                                     if(task.isSuccessful()) {
                                                         DocumentSnapshot document = task.getResult();
                                                         ArrayList<String> commentsAfterDelete = (ArrayList<String>) document.get(userName);
+                                                        int numOfComments = Integer.parseInt(document.getString("numberOfComments"));
 
                                                         commentsAfterDelete.remove(comm.getText().toString());
 
                                                         HashMap<String,Object> allComments = (HashMap<String, Object>) document.getData();
                                                         allComments.put(userName,commentsAfterDelete);
+                                                        allComments.put("numberOfComments",numOfComments+"");
 
                                                         db.collection("Questions").document(ques)
                                                                 .set(allComments).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -273,7 +275,8 @@ public class AllUserComments extends AppCompatActivity {
         username.setText(userName);
         comm.setText(myComment);
         if(!imageUrll.equals("null")) {
-            profile.setImageBitmap(getBitmapFromURL(imageUrll));
+           // profile.setImageBitmap(getBitmapFromURL(imageUrll));
+            Picasso.with(AllUserComments.this).load(imageUrll).into(profile);
         } else {
             profile.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.profileicon, null));
         }
@@ -291,6 +294,10 @@ public class AllUserComments extends AppCompatActivity {
 
 
                         HashMap<String, Object> addComment = (HashMap<String, Object>) document.getData();
+
+                        int numOfComments = Integer.parseInt(document.getString("numberOfComments"))+1;
+                        addComment.put("numberOfComments",numOfComments+"");
+
 
                         for (String key : addComment.keySet()) {
 
@@ -312,6 +319,7 @@ public class AllUserComments extends AppCompatActivity {
                                                 Log.d("", "DocumentSnapshot successfully written!");
                                                 // Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
                                                 // startActivity(intent);
+
 
 
                                             }
@@ -367,23 +375,5 @@ public class AllUserComments extends AppCompatActivity {
 
 
 
-    }
-
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            Log.e("src", src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap", myBitmap + "");
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception", e.getMessage());
-            return null;
-        }
     }
 }

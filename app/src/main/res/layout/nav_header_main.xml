@@ -27,6 +27,17 @@
         android:scaleType="centerCrop"
         android:src="@drawable/profileicon" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:id="@+id/changeProfile"
+        android:text="Change Profile Photo"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+
 
     <TextView
         android:id="@+id/name"

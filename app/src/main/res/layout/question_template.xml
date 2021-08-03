@@ -93,8 +93,15 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:tag="unliked"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="5dp"
                     android:background="@drawable/like_empty" />
+
+                <TextView
+                    android:id="@+id/numberOfLikes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="5dp"/>
+
 
                 <ImageView
                     android:id="@+id/comments"
@@ -102,6 +109,12 @@
                     android:layout_height="30dp"
                     android:layout_marginStart="5dp"
                     android:src="@drawable/comment" />
+
+                <TextView
+                    android:id="@+id/numberOfComments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"/>
 
 
             </LinearLayout>

@@ -34,11 +34,14 @@ public class levelRecyclerAdapter extends  RecyclerView.Adapter<levelViewHolder>
     ArrayList<String> questions;
     ArrayList<String> corrects;
     ArrayList<ArrayList<String>> incorrects;
+    ArrayList<String> scores;
 
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public levelRecyclerAdapter(Context context) {
+
+    public levelRecyclerAdapter(Context context,ArrayList<String> scores) {
         this.context = context;
+        this.scores = scores;
     }
 
 
@@ -54,6 +57,25 @@ public class levelRecyclerAdapter extends  RecyclerView.Adapter<levelViewHolder>
     public void onBindViewHolder(@NonNull levelViewHolder holder, int position) {
 
         holder.getLevelButton().setText(levels[position]);
+        holder.getScoretextView().setText(scores.get(position));
+
+
+        if(scores.get(position).equals("0.0")) {
+
+            if(position==0) {
+                holder.getLevelButton().setEnabled(true);
+            } else if(!scores.get(position-1).equals("0.0")) {
+                holder.getLevelButton().setEnabled(true);
+            } else {
+                holder.getLevelButton().setEnabled(false);
+            }
+
+        } else {
+            holder.getLevelButton().setEnabled(true);
+        }
+
+
+
         holder.getLevelButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,15 +111,13 @@ public class levelRecyclerAdapter extends  RecyclerView.Adapter<levelViewHolder>
                                         @Override
                                         public void run() {
 
-
-
-
                                             Intent intent = new Intent(context,VocabQuizActivity.class);
                                             intent.putStringArrayListExtra("questionTexts",questions);
                                             intent.putStringArrayListExtra("correctAnswer",corrects);
                                             Bundle args = new Bundle();
                                             args.putSerializable("ARRAYLIST",(Serializable)incorrects);
                                             intent.putExtra("BUNDLE",args);
+                                            intent.putExtra("level",position);
                                             context.startActivity(intent);
                                             progress.dismiss();
                                         }
