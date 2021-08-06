@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String username="";
     String email="";
     String imageUrl="";
+    String commentUrl="";
     PopupWindow popupWindow;
     int count=0;
     ImageView feed;
@@ -122,6 +123,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView profileImageView;
     ArrayList<String> numberOfLikes;
     ArrayList<String> numberOfComments;
+
+
+    ArrayList<String> myQuestions;
+    ArrayList<String> likesOnMyPost;
+    ArrayList<String> commentsOnMyPost;
+    ArrayList<String> myLikesPosts;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +173,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 progress.setMessage("Wait while loading...");
                 progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
                 progress.show();
+
+                DocumentReference docRef = db.collection("user").document(mAuth.getUid());
+                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.d("", "DocumentSnapshot data: " + document.getData());
+                                commentUrl = document.getString("imageUrl");
+
+                            } else {
+                                Log.d("", "No such document");
+                            }
+                        } else {
+                            Log.d("", "get failed with ", task.getException());
+                        }
+                    }
+                });
 
                 db.collection("user").document(mAuth.getUid())
                         .get()
@@ -213,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.putStringArrayListExtra("likedQuestions",likedQuestions);
                         intent.putStringArrayListExtra("numOfLikes",numberOfLikes);
                         intent.putStringArrayListExtra("numOfComments",numberOfComments);
-                        intent.putExtra("imageUrll",imageUrl);
+                        intent.putExtra("imageUrll",commentUrl);
                         intent.putExtra("username",username);
                         startActivity(intent);
                         progress.dismiss();
@@ -242,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
 
 
-                changeProfile.setTextColor(Color.GREEN);
+                //changeProfile.setTextColor(Color.GREEN);
 
                 if(android.os.Build.VERSION.SDK_INT>=23 && ActivityCompat.checkSelfPermission(getApplicationContext(),
                         Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
@@ -385,25 +415,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-  /*  public static Bitmap getBitmapFromURL(String src) {
-        try {
-            Log.e("src", src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap", myBitmap + "");
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception", e.getMessage());
-            return null;
-        }
-    } */
-
-
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -414,6 +425,70 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         boolean focusable = true;
 
         switch (id){
+
+            case R.id.myAccount:
+
+                 myQuestions = new ArrayList<>();
+                 likesOnMyPost = new ArrayList<>() ;
+                 commentsOnMyPost = new ArrayList<>();
+                 myLikesPosts = new ArrayList<>();
+
+
+                db.collection("Questions")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                        ArrayList<String> sharedBy = (ArrayList<String>) document.get("SharedBy");
+                                        if(sharedBy.get(0).equals(mAuth.getUid())) {
+                                            myQuestions.add(document.getId());
+                                            likesOnMyPost.add(document.getString("numberOfLikes"));
+                                            commentsOnMyPost.add(document.getString("numberOfComments"));
+                                        }
+
+                                        Log.d("", document.getId() + " => " + document.getData());
+                                    }
+                                } else {
+                                    Log.d("", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        }) ;
+
+                db.collection("user").document(mAuth.getUid())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()) {
+
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+                                    myLikesPosts = (ArrayList<String>)  documentSnapshot.get("likedPosts");
+
+
+                                }
+                            }
+                        });
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(MainActivity.this,MyAccount.class);
+                        intent.putStringArrayListExtra("myQuestions",myQuestions);
+                        intent.putStringArrayListExtra("myLikesPosts",myLikesPosts);
+                        intent.putStringArrayListExtra("likesOnMyPost",likesOnMyPost);
+                        intent.putStringArrayListExtra("commentsOnMyPost",commentsOnMyPost);
+                        intent.putExtra("imageUrll",imageUrl);
+                        intent.putExtra("email",email);
+                        intent.putExtra("username",username);
+                        startActivity(intent);
+                    }
+                },1000);
+
+
+                break;
 
             case R.id.shareQuestion:
 
@@ -649,7 +724,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         super.onBackPressed();
 
-        popupWindow.dismiss();
+
     }
 
 
@@ -789,46 +864,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
 
-                            new Background(MainActivity.this) {
-                                @Override
-                                public void doInBackground() {
-
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         Log.d("", document.getId() + " => " + document.getData());
 
                                          HashMap<String,Object> res = (HashMap<String, Object>) document.getData();
 
-                                        ArrayList<String> ques = (ArrayList) document.get("SharedBy");
-                                        if(ques.get(0).equals(mAuth.getUid())) {
-                                            ques.remove(2);
-                                            ques.add(2,imageDownloadLink);
-                                            res.put("SharedBy",ques);
+                                         for(String commenturl :res.keySet()) {
+                                             if(commenturl.equals("SharedBy")) {
+                                                 ArrayList<String> ques = (ArrayList) document.get("SharedBy");
+                                                 if (ques.get(0).equals(mAuth.getUid())) {
+                                                     ques.remove(2);
+                                                     ques.add(2, imageDownloadLink);
+                                                     res.put("SharedBy", ques);
 
-                                            db.collection("Questions").document(document.getId())
-                                                    .set(res)
-                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    Toast.makeText(MainActivity.this, "Successfull", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
+                                                     db.collection("Questions").document(document.getId())
+                                                             .set(res)
+                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                 @Override
+                                                                 public void onComplete(@NonNull Task<Void> task) {
+                                                                     Toast.makeText(MainActivity.this, "Successfull", Toast.LENGTH_SHORT).show();
+                                                                 }
+                                                             });
+                                                 }
+                                             }else if(commenturl.equals(mAuth.getUid())) {
+
+                                                 ArrayList<String> comm = (ArrayList<String>) document.get(mAuth.getUid());
+
+                                                 comm.remove(1);
+                                                 comm.add(1,imageDownloadLink);
+                                                 res.put(mAuth.getUid(),comm);
+
+                                                 db.collection("Questions").document(document.getId())
+                                                         .set(res)
+                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                             @Override
+                                                             public void onComplete(@NonNull Task<Void> task) {
+                                                                 Toast.makeText(MainActivity.this, "Successfull", Toast.LENGTH_SHORT).show();
+                                                             }
+                                                         });
+                                             }
+                                         }
+
+
+
 
                                     }
-                                }
-
-                                @Override
-                                public void onPostExecute() {
-
-                                    //hear is result part same
-                                    //same like post execute
-                                    //UI Thread(update your UI widget)
-                                }
-                            }.execute();
-
-
-
-
 
                         } else {
                             Log.d("", "Error getting documents: ", task.getException());

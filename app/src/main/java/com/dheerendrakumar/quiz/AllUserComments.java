@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -58,6 +59,7 @@ public class AllUserComments extends AppCompatActivity {
     LinearLayout commenSection;
     ArrayList<String> myComments;
     String userName="";
+    FirebaseAuth mAuth;
 
 
 
@@ -67,6 +69,7 @@ public class AllUserComments extends AppCompatActivity {
         setContentView(R.layout.activity_all_user_comments);
 
 
+        mAuth = FirebaseAuth.getInstance();
 
 
         myComments = new ArrayList<>();
@@ -96,7 +99,6 @@ public class AllUserComments extends AppCompatActivity {
 
                 setMyComment();
 
-
             }
         });
 
@@ -119,10 +121,10 @@ public class AllUserComments extends AppCompatActivity {
 
                                 ArrayList<String> userComment = (ArrayList<String>) document.get(key);
 
-                                names.add(key);
-                                imageUrl.add(userComment.get(0));
+                                names.add(userComment.get(0));
+                                imageUrl.add(userComment.get(1));
                                 ArrayList<String> myComment = new ArrayList<>();
-                                for(int i=1;i<userComment.size();i++) {
+                                for(int i=2;i<userComment.size();i++) {
                                     myComment.add(userComment.get(i));
                                 }
                                 AllComments.add(myComment);
@@ -309,7 +311,7 @@ public class AllUserComments extends AppCompatActivity {
                                 //addComment.remove(key);
 
                                 com.add(myComment);
-                                addComment.put(userName, com);
+                                addComment.put(mAuth.getUid(), com);
 
                                 db.collection("Questions").document(ques)
                                         .set(addComment)
@@ -339,10 +341,11 @@ public class AllUserComments extends AppCompatActivity {
 
                         if(count==addComment.size()) {
                             ArrayList<String> newComment = new ArrayList<>();
+                            newComment.add(userName);
                             newComment.add(imageUrll);
                             newComment.add(myComment);
 
-                            addComment.put(userName,newComment);
+                            addComment.put(mAuth.getUid(),newComment);
 
                             db.collection("Questions").document(ques)
                                     .set(addComment)

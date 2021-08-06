@@ -23,7 +23,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFF33"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
@@ -50,7 +49,7 @@
                 android:layout_weight="50"
                 android:background="@drawable/rounded_corner"
                 android:text="Random \nQuiz"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
             <Button
@@ -64,7 +63,7 @@
                 android:layout_weight="50"
                 android:background="@drawable/rounded_corner"
                 android:text=" English \nvocabulary"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
 
         </LinearLayout>

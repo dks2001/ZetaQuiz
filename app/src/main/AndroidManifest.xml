@@ -3,7 +3,7 @@
     package="com.dheerendrakumar.quiz">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Quiz">
-        <activity android:name=".AllUserComments"></activity>
+        <activity android:name=".MyAccount"></activity>
+        <activity android:name=".AllUserComments" />
         <activity android:name=".QuestionsFeed" />
         <activity android:name=".VocabQuizActivity" />
         <activity android:name=".VocabularyActivity" />
@@ -29,6 +30,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

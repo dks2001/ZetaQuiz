@@ -111,63 +111,77 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
             @Override
             public void onClick(View v) {
 
-                ProgressDialog progress = new ProgressDialog(SpecificationsActivity.this);
-                progress.setTitle("Loading");
-                progress.setMessage("Wait while loading...");
-                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-                progress.show();
+
 
                 String numberOfQuestions = spinner.getSelectedItem().toString();
                 String difficultyLevel = dlSpiiner.getSelectedItem().toString();
                 String type = toq.getSelectedItem().toString();
 
-                if(type.equals("Multiple Choice")) {
-                    typeFinal = "multiple";
-                } else if(type.equals("True/False")){
-                    typeFinal = "boolean";
-                }
+                if(numberOfQuestions.equals("Number Of Questions")) {
+                    Toast.makeText(SpecificationsActivity.this, "please specify number of questions", Toast.LENGTH_SHORT).show();
 
-                url = "https://opentdb.com/api.php?amount="+Integer.parseInt(numberOfQuestions)+"&category="+categoryCode+"&difficulty="+difficultyLevel+"&type="+typeFinal+"";
+                } else if(difficultyLevel.equals("Difficulty Level")) {
+                    Toast.makeText(SpecificationsActivity.this, "please specify difficulty level", Toast.LENGTH_SHORT).show();
 
-                if(isNetworkAvailable()) {
-                    getData(url);
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(questionTexts.size()==0) {
-                                Toast.makeText(SpecificationsActivity.this, "Questions not available.Please change your specifications.", Toast.LENGTH_LONG).show();
-                                progress.dismiss();
-                            } else if(type.equals("Multiple Choice")) {
-                                Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SpecificationsActivity.this,QuizActivity.class);
-                                intent.putStringArrayListExtra("questionTexts",questionTexts);
-                                intent.putStringArrayListExtra("correctAnswer",correctAnswer);
-                                Bundle args = new Bundle();
-                                args.putSerializable("ARRAYLIST",(Serializable)incorrectAnswers);
-                                intent.putExtra("BUNDLE",args);
-                                intent.putExtra("numberOfQuestions",numberOfQuestions);
-                                startActivity(intent);
-                                progress.dismiss();
-                            } else {
-
-                                Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(SpecificationsActivity.this,TrueFalseActivity.class);
-                                intent.putStringArrayListExtra("questionTexts",questionTexts);
-                                intent.putStringArrayListExtra("correctAnswer",correctAnswer);
-                                Bundle args = new Bundle();
-                                args.putSerializable("ARRAYLIST",(Serializable)incorrectAnswers);
-                                intent.putExtra("BUNDLE",args);
-                                intent.putExtra("numberOfQuestions",numberOfQuestions);
-                                startActivity(intent);
-                                progress.dismiss();
-
-                            }
-                        }
-                    },2000);
-
+                } else if(type.equals("Set Type")) {
+                    Toast.makeText(SpecificationsActivity.this, "please specify type", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(SpecificationsActivity.this, "error", Toast.LENGTH_SHORT).show();
+
+
+                    ProgressDialog progress = new ProgressDialog(SpecificationsActivity.this);
+                    progress.setTitle("Loading");
+                    progress.setMessage("Wait while loading...");
+                    progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                    progress.show();
+
+                    if (type.equals("Multiple Choice")) {
+                        typeFinal = "multiple";
+                    } else if (type.equals("True/False")) {
+                        typeFinal = "boolean";
+                    }
+
+                    url = "https://opentdb.com/api.php?amount=" + Integer.parseInt(numberOfQuestions) + "&category=" + categoryCode + "&difficulty=" + difficultyLevel + "&type=" + typeFinal + "";
+
+                    if (isNetworkAvailable()) {
+                        getData(url);
+
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (questionTexts.size() == 0) {
+                                    Toast.makeText(SpecificationsActivity.this, "Questions not available.Please change your specifications.", Toast.LENGTH_LONG).show();
+                                    progress.dismiss();
+                                } else if (type.equals("Multiple Choice")) {
+                                    Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(SpecificationsActivity.this, QuizActivity.class);
+                                    intent.putStringArrayListExtra("questionTexts", questionTexts);
+                                    intent.putStringArrayListExtra("correctAnswer", correctAnswer);
+                                    Bundle args = new Bundle();
+                                    args.putSerializable("ARRAYLIST", (Serializable) incorrectAnswers);
+                                    intent.putExtra("BUNDLE", args);
+                                    intent.putExtra("numberOfQuestions", numberOfQuestions);
+                                    startActivity(intent);
+                                    progress.dismiss();
+                                } else {
+
+                                    Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(SpecificationsActivity.this, TrueFalseActivity.class);
+                                    intent.putStringArrayListExtra("questionTexts", questionTexts);
+                                    intent.putStringArrayListExtra("correctAnswer", correctAnswer);
+                                    Bundle args = new Bundle();
+                                    args.putSerializable("ARRAYLIST", (Serializable) incorrectAnswers);
+                                    intent.putExtra("BUNDLE", args);
+                                    intent.putExtra("numberOfQuestions", numberOfQuestions);
+                                    startActivity(intent);
+                                    progress.dismiss();
+
+                                }
+                            }
+                        }, 2000);
+
+                    } else {
+                        Toast.makeText(SpecificationsActivity.this, "error", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }

@@ -26,7 +26,7 @@ public class VocabularyActivity extends AppCompatActivity {
     ImageView imageView;
     Toolbar toolbar;
     private RecyclerView levelRecyclerview;
-    ArrayList<String> scores = new ArrayList<>();
+    //ArrayList<String> scores = new ArrayList<>();
     FirebaseFirestore db;
     FirebaseAuth mAuth;
 
@@ -39,6 +39,9 @@ public class VocabularyActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        imageView.setX(-800);
+        imageView.animate().translationX(0).setDuration(500).alpha(1);
         db = FirebaseFirestore.getInstance();
 
         ArrayList<String> scores = getIntent().getStringArrayListExtra("scores");
@@ -52,8 +55,7 @@ public class VocabularyActivity extends AppCompatActivity {
             }
         });
 
-        imageView.setX(-800);
-        imageView.animate().translationX(0).setDuration(500).alpha(1);
+
 
 
         levelRecyclerview = findViewById(R.id.levelrecyclerview);

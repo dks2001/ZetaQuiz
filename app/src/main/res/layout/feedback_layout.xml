@@ -29,8 +29,8 @@
         android:background="@drawable/edittext_white_border"
         android:hint="Your Feedback..."
         android:padding="10dp"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white" />
+        android:textColor="@color/black"
+        android:textColorHint="@color/black" />
 
     <LinearLayout
         android:layout_width="match_parent"

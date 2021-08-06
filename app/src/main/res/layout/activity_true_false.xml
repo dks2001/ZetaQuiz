@@ -10,7 +10,7 @@
         android:id="@+id/DailymainTFLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="	#BA55D3"
+        android:background="	#4B0082"
         android:orientation="vertical">
 
         <LinearLayout
