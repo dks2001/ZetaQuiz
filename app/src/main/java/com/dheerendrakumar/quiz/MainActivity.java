@@ -62,6 +62,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -130,6 +131,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayList<String> commentsOnMyPost;
     ArrayList<String> myLikesPosts;
 
+
+    ArrayList<String> allUserName;
+    ArrayList<String> alluserUsername;
+    ArrayList<String> allUserImageUrl;
+    ArrayList<String> friends;
+    String myusername="";
+
+    ArrayList<String> myfriends;
+    ArrayList<String> friendsImageUrl;
+    ArrayList<String> friendsname;
 
 
 
@@ -219,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                 Log.i("urls",sharedBy.get(0));
                                                 name.add(sharedBy.get(1));
                                                 question.add(document.getId());
+
                                                 numberOfComments.add(document.getString("numberOfComments"));
                                                 numberOfLikes.add(document.getString("numberOfLikes"));
 
@@ -250,6 +262,62 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 },3000);
 
+            }
+        });
+
+
+        findViewById(R.id.chat).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                friendsname = new ArrayList<>();
+                friendsImageUrl = new ArrayList<>();
+                myfriends = new ArrayList<>();
+
+                db.collection("user").document(mAuth.getUid())
+                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                         myfriends = (ArrayList<String>) documentSnapshot.get("friends");
+
+                    }
+                });
+
+                db.collection("user").get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+
+                                    for(int i=0;i<myfriends.size();i++) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                            String username = document.getString("username");
+                                            if (username.equals(myfriends.get(i))) {
+                                                friendsname.add(document.getString("name"));
+                                                friendsImageUrl.add(document.getString("imageUrl"));
+                                            }
+                                        }
+
+                                    }
+
+
+                            }
+                        });
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(MainActivity.this,Friends.class);
+                        intent.putStringArrayListExtra("name",friendsname);
+                        intent.putStringArrayListExtra("username",myfriends);
+                        intent.putStringArrayListExtra("imageurl",friendsImageUrl);
+                        intent.putExtra("myUsername",myusername);
+                        startActivity(intent);
+                    }
+                },2000);
 
             }
         });
@@ -298,6 +366,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         username = document.getString("name");
                         email = document.getString("email");
                         imageUrl = document.getString("imageUrl");
+                        myusername = document.getString("username");
                         nameTextView.setText(document.getString("name"));
                         emailTextView.setText(document.getString("email"));
 
@@ -489,6 +558,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
                 break;
+
+            case R.id.addFriend:
+
+                allUserImageUrl = new ArrayList<>();
+                alluserUsername = new ArrayList<>();
+                allUserName = new ArrayList<>();
+                friends = new ArrayList<>();
+
+
+                db.collection("user")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                        if(!document.getId().equals(mAuth.getUid())) {
+
+                                            allUserImageUrl.add(document.getString("imageUrl"));
+                                            allUserName.add(document.getString("name"));
+                                            alluserUsername.add(document.getString("username"));
+
+                                        } else {
+                                            friends = (ArrayList<String>) document.get("friends");
+                                        }
+
+                                        Log.d("", document.getId() + " => " + document.getData());
+                                    }
+                                    Intent intent1 = new Intent(MainActivity.this,AddFriend.class);
+                                    intent1.putStringArrayListExtra("name",allUserName);
+                                    intent1.putStringArrayListExtra("username",alluserUsername);
+                                    intent1.putStringArrayListExtra("imageUrl",allUserImageUrl);
+                                    intent1.putStringArrayListExtra("friends",friends);
+                                    intent1.putExtra("myusername",myusername);
+                                    startActivity(intent1);
+
+                                } else {
+                                    Log.d("", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        }) ;
+
+
+                break;
+
 
             case R.id.shareQuestion:
 
@@ -917,12 +1032,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
 
 
-
-
-
-
-
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        checkOnlineStatus(timestamp);
+        checkTypingStatus("noOne");
+    }
+
+    private void checkOnlineStatus(String status) {
+        // check online status
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("users").child(mAuth.getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("onlineStatus", status);
+        dbref.updateChildren(hashMap);
+    }
+
+    private void checkTypingStatus(String typing) {
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("users").child(mAuth.getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        dbref.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onStart() {
+        //checkUserStatus();
+        checkOnlineStatus("online");
+        super.onStart();
+    }
 
 }

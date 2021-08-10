@@ -34,6 +34,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -48,6 +50,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LauncherActivity extends AppCompatActivity {
+
+    private DatabaseReference mDatabase;
 
     private static final int RC_SIGN_IN =1000 ;
     Button signinwithGoogle;
@@ -70,6 +74,8 @@ public class LauncherActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         handler = new Handler();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         signinwithGoogle = findViewById(R.id.signinbuttongoogle);
         signUpTextView = findViewById(R.id.signuptextview);
@@ -230,6 +236,8 @@ public class LauncherActivity extends AppCompatActivity {
                             newUser.put("email", emailEditText.getText().toString());
                             newUser.put("imageUrl", "null");
                             newUser.put("username", usernameEdittext.getText().toString());
+                            ArrayList<String> friends = new ArrayList<>();
+                            newUser.put("friends",friends);
                             addUser(task, newUser);
 
                             //Intent intent = new Intent(LauncherActivity.this, MainActivity.class);
@@ -247,8 +255,6 @@ public class LauncherActivity extends AppCompatActivity {
                 });
 
     }
-
-
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -274,6 +280,8 @@ public class LauncherActivity extends AppCompatActivity {
                 SecureRandom random = new SecureRandom();
                 int rand = random.nextInt(1000);
                 userrr.put("username","guest"+rand);
+                ArrayList<String> friends = new ArrayList<>();
+                userrr.put("friends",friends);
                 Log.i("image",account.getPhotoUrl()+"");
 
                 firebaseAuthWithGoogle(account.getIdToken());
@@ -427,6 +435,8 @@ public class LauncherActivity extends AppCompatActivity {
                         Log.w("", "Error writing document", e);
                     }
                 });
+
+        mDatabase.child("users").child("uid").child(mAuth.getUid()).child("username").setValue(usernameEdittext.getText().toString());
     }
 
 }

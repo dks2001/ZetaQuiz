@@ -31,7 +31,7 @@ public class MyAccount extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account);
 
-        ImageView myProfile = findViewById(R.id.myProfile);
+        ImageView myProfile = findViewById(R.id.friendprofile);
         TextView username = findViewById(R.id.myAccountUsername);
         TextView emaill = findViewById(R.id.myAccountEmail);
 
