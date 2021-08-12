@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,6 +28,15 @@ public class Friends extends AppCompatActivity {
         setContentView(R.layout.activity_friends);
         myfriends = findViewById(R.id.myfriends);
         mAuth = FirebaseAuth.getInstance();
+
+        EditText searchUser = findViewById(R.id.searchuser);
+        searchUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Friends.this,ActivitySearch.class);
+                startActivity(intent);
+            }
+        });
 
         ArrayList<String> name = getIntent().getStringArrayListExtra("name");
         ArrayList<String> username = getIntent().getStringArrayListExtra("username");

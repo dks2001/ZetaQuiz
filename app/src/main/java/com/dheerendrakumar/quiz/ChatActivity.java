@@ -24,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -56,6 +60,7 @@ public class ChatActivity extends AppCompatActivity {
     ImageView profiletv;
     String myuid;
     RelativeLayout relativeLayout;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
+        db = FirebaseFirestore.getInstance();
 
          hisUsername = getIntent().getStringExtra("hisUsername");
          myUsername = getIntent().getStringExtra("myUsername");
@@ -84,7 +90,7 @@ public class ChatActivity extends AppCompatActivity {
         checkUserStatus();
 
 
-        relativeLayout.getViewTreeObserver().addOnGlobalLayoutListener(new             ViewTreeObserver.OnGlobalLayoutListener() {
+        relativeLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 Rect r = new Rect();
@@ -107,6 +113,39 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                db.collection("user").document(myuid).get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                DocumentSnapshot documentSnapshot = task.getResult();
+                                HashMap<String,Object> res = (HashMap<String, Object>) documentSnapshot.getData();
+                               // ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
+                                //friends.remove(hisUsername);
+                                //friends.add(0,hisUsername);
+                                ArrayList<String> chatList = (ArrayList<String>) documentSnapshot.get("chatList");
+                                if(!chatList.contains(hisUsername)) {
+                                    chatList.add(0,hisUsername);
+                                } else {
+                                    chatList.remove(hisUsername);
+                                    chatList.add(0,hisUsername);
+                                }
+                                //res.put("friends",friends);
+                                res.put("chatList",chatList);
+
+
+
+                                db.collection("user").document(myuid)
+                                        .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(ChatActivity.this, "first", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }
+                        });
+
                 checkTypingStatus("noOne");
                 notify = true;
                 String message = msg.getText().toString().trim();
@@ -119,7 +158,11 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
         name.setText(hisUsername);
-        Picasso.with(ChatActivity.this).load(imageUrl).into(profiletv);
+        if(imageUrl.equals("null")) {
+            profiletv.setImageResource(R.drawable.profileicon);
+        } else {
+            Picasso.with(ChatActivity.this).load(imageUrl).into(profiletv);
+        }
 
 
         Query userquery = users.orderByChild("username").equalTo(hisUsername);

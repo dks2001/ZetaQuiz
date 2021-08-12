@@ -67,6 +67,11 @@ public class LauncherActivity extends AppCompatActivity {
     boolean exist = false;
 
 
+
+
+    HashMap<String,String> database = new HashMap<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -237,8 +242,18 @@ public class LauncherActivity extends AppCompatActivity {
                             newUser.put("imageUrl", "null");
                             newUser.put("username", usernameEdittext.getText().toString());
                             ArrayList<String> friends = new ArrayList<>();
+                            ArrayList<String> chatList = new ArrayList<>();
+                            newUser.put("chatList",chatList);
                             newUser.put("friends",friends);
-                            addUser(task, newUser);
+
+
+                            database.put("name",nameEditText.getText().toString());
+                            database.put("username",usernameEdittext.getText().toString());
+                            database.put("imageUrl","null");
+                            database.put("uid",mAuth.getUid());
+
+
+                            addUser(task, newUser,database);
 
                             //Intent intent = new Intent(LauncherActivity.this, MainActivity.class);
                             //startActivity(intent);
@@ -281,6 +296,8 @@ public class LauncherActivity extends AppCompatActivity {
                 int rand = random.nextInt(1000);
                 userrr.put("username","guest"+rand);
                 ArrayList<String> friends = new ArrayList<>();
+                ArrayList<String> chatList = new ArrayList<>();
+                userrr.put("chatList",chatList);
                 userrr.put("friends",friends);
                 Log.i("image",account.getPhotoUrl()+"");
 
@@ -319,7 +336,7 @@ public class LauncherActivity extends AppCompatActivity {
                             Log.d("pppp", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            addUser(task,userrr);
+                            //addUser(task,userrr);
 
 
 
@@ -418,7 +435,7 @@ public class LauncherActivity extends AppCompatActivity {
         });
     }
 
-    public void addUser(Task<AuthResult> task,Map<String, Object> newUser) {
+    public void addUser(Task<AuthResult> task,Map<String, Object> newUser,Map<String,String> database) {
         db.collection("user").document(task.getResult().getUser().getUid())
                 .set(newUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -436,7 +453,10 @@ public class LauncherActivity extends AppCompatActivity {
                     }
                 });
 
-        mDatabase.child("users").child("uid").child(mAuth.getUid()).child("username").setValue(usernameEdittext.getText().toString());
+
+
+        //mDatabase.child("users").child(mAuth.getUid()).child("username").setValue(usernameEdittext.getText().toString());
+        mDatabase.child("users").child(mAuth.getUid()).setValue(database);
     }
 
 }

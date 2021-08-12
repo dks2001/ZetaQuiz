@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseAuth mAuth;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
+    String myname="";
     String username="";
     String email="";
     String imageUrl="";
@@ -124,13 +125,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView profileImageView;
     ArrayList<String> numberOfLikes;
     ArrayList<String> numberOfComments;
-
-
-    ArrayList<String> myQuestions;
-    ArrayList<String> likesOnMyPost;
-    ArrayList<String> commentsOnMyPost;
-    ArrayList<String> myLikesPosts;
-
 
     ArrayList<String> allUserName;
     ArrayList<String> alluserUsername;
@@ -256,11 +250,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.putStringArrayListExtra("numOfLikes",numberOfLikes);
                         intent.putStringArrayListExtra("numOfComments",numberOfComments);
                         intent.putExtra("imageUrll",commentUrl);
-                        intent.putExtra("username",username);
+                        intent.putExtra("username",myusername);
+                        Log.i("myUsername",myusername);
                         startActivity(intent);
                         progress.dismiss();
                     }
-                },3000);
+                },2000);
 
             }
         });
@@ -280,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                         DocumentSnapshot documentSnapshot = task.getResult();
-                         myfriends = (ArrayList<String>) documentSnapshot.get("friends");
+                         myfriends = (ArrayList<String>) documentSnapshot.get("chatList");
 
                     }
                 });
@@ -317,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.putExtra("myUsername",myusername);
                         startActivity(intent);
                     }
-                },2000);
+                },1000);
 
             }
         });
@@ -363,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Log.d("", "DocumentSnapshot data: " + document.getData());
-                        username = document.getString("name");
+                        myname = document.getString("name");
                         email = document.getString("email");
                         imageUrl = document.getString("imageUrl");
                         myusername = document.getString("username");
@@ -425,9 +420,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
 
         }
-
-
-
 
 
 
@@ -497,64 +489,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.myAccount:
 
-                 myQuestions = new ArrayList<>();
-                 likesOnMyPost = new ArrayList<>() ;
-                 commentsOnMyPost = new ArrayList<>();
-                 myLikesPosts = new ArrayList<>();
-
-
-                db.collection("Questions")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                        ArrayList<String> sharedBy = (ArrayList<String>) document.get("SharedBy");
-                                        if(sharedBy.get(0).equals(mAuth.getUid())) {
-                                            myQuestions.add(document.getId());
-                                            likesOnMyPost.add(document.getString("numberOfLikes"));
-                                            commentsOnMyPost.add(document.getString("numberOfComments"));
-                                        }
-
-                                        Log.d("", document.getId() + " => " + document.getData());
-                                    }
-                                } else {
-                                    Log.d("", "Error getting documents: ", task.getException());
-                                }
-                            }
-                        }) ;
-
-                db.collection("user").document(mAuth.getUid())
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful()) {
-
-                                    DocumentSnapshot documentSnapshot = task.getResult();
-                                    myLikesPosts = (ArrayList<String>)  documentSnapshot.get("likedPosts");
-
-
-                                }
-                            }
-                        });
-
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(MainActivity.this,MyAccount.class);
-                        intent.putStringArrayListExtra("myQuestions",myQuestions);
-                        intent.putStringArrayListExtra("myLikesPosts",myLikesPosts);
-                        intent.putStringArrayListExtra("likesOnMyPost",likesOnMyPost);
-                        intent.putStringArrayListExtra("commentsOnMyPost",commentsOnMyPost);
-                        intent.putExtra("imageUrll",imageUrl);
-                        intent.putExtra("email",email);
-                        intent.putExtra("username",username);
-                        startActivity(intent);
-                    }
-                },1000);
+                        Intent intent2 = new Intent(MainActivity.this,MyAccount.class);
+                        intent2.putExtra("imageUrll",imageUrl);
+                        intent2.putExtra("email",email);
+                        intent2.putExtra("name",myname);
+                        intent2.putExtra("username",myusername);
+                        startActivity(intent2);
 
 
                 break;
@@ -638,7 +578,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             //HashMap<String, ArrayList<String>> question = new HashMap<>();
                             ArrayList<String> userpost = new ArrayList<>();
                             userpost.add(mAuth.getUid());
-                            userpost.add(username);
+                            userpost.add(myusername);
                             userpost.add(imageUrl);
                            // question.put("SharedBy",userpost);
                             total.put("SharedBy",userpost);
@@ -818,6 +758,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.logout:
+                String timestamp = String.valueOf(System.currentTimeMillis());
+                checkOnlineStatus(timestamp);
+                checkTypingStatus("noOne");
                 mAuth.signOut();
                 Intent intent = new Intent(MainActivity.this,LauncherActivity.class);
                 startActivity(intent);
@@ -835,12 +778,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
 
-
-    }
 
 
     @Override
@@ -1034,13 +972,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    @Override
+   /* @Override
     protected void onPause() {
         super.onPause();
+
         String timestamp = String.valueOf(System.currentTimeMillis());
         checkOnlineStatus(timestamp);
         checkTypingStatus("noOne");
+    } */
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        checkOnlineStatus(timestamp);
+        checkTypingStatus("noOne");
+
     }
+
 
     private void checkOnlineStatus(String status) {
         // check online status

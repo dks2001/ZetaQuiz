@@ -1,17 +1,26 @@
 package com.dheerendrakumar.quiz;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsViewHolder> {
 
@@ -21,6 +30,8 @@ public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsViewHold
     ArrayList<String> imageurl;
     String myUsername;
     Context context;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public FriendsRecyclerAdapter(Context context,ArrayList<String> name,ArrayList<String> username,ArrayList<String> imageurl,String myUsername) {
         this.context =context;
@@ -57,6 +68,59 @@ public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsViewHold
                 intent.putExtra("myUsername",myUsername);
                 intent.putExtra("imageUrl",imageurl.get(position));
                 context.startActivity(intent);
+            }
+        });
+
+        holder.getLinearLayout().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Are you sure you want to delete the post?");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        db.collection("user").document(mAuth.getUid())
+                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                DocumentSnapshot documentSnapshot = task.getResult();
+                                HashMap<String,Object> res = (HashMap<String, Object>) documentSnapshot.getData();
+                                ArrayList<String> chat= (ArrayList<String>) documentSnapshot.get("chatList");
+
+                                chat.remove(username.get(position));
+                                res.put("chatList",chat);
+
+                                db.collection("user").document(mAuth.getUid()).
+                                        set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(context, "deleted", Toast.LENGTH_SHORT).show();
+                                        name.remove(holder.getAdapterPosition());
+                                        username.remove(holder.getAdapterPosition());
+                                        imageurl.remove(holder.getAdapterPosition());
+                                        notifyItemRemoved(holder.getAdapterPosition());
+                                    }
+                                });
+
+                            }
+                        });
+
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+                return true;
             }
         });
 

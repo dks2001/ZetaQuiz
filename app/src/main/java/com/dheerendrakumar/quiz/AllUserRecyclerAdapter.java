@@ -92,8 +92,11 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
                                 if (username.get(position).equals(documentSnapshot.getString("username"))) {
                                     String id = documentSnapshot.getId();
                                     ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
+                                    ArrayList<String> chatList = (ArrayList<String>) documentSnapshot.get("chatList");
                                     friends.add(myusername);
+                                    chatList.add(myusername);
                                     res.put("friends", friends);
+                                    res.put("chatList",chatList);
 
                                     db.collection("user").document(id)
                                             .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -106,8 +109,11 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
                                 } else if (myusername.equals(documentSnapshot.getString("username"))) {
 
                                     ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
+                                    ArrayList<String> chatList = (ArrayList<String>) documentSnapshot.get("chatList");
                                     friends.add(username.get(position));
+                                    chatList.add(username.get(position));
                                     res.put("friends", friends);
+                                    res.put("chatList",chatList);
 
                                     db.collection("user").document(mAuth.getUid())
                                             .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {

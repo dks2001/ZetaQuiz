@@ -270,6 +270,9 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
             @Override
             public void onClick(View v) {
 
+                Log.i("mmmm",userName);
+                Log.i("nnnn",holder.getUsername().getText().toString());
+
                 if(holder.getUsername().getText().toString().equals(userName)) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
