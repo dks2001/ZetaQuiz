@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.putExtra("myUsername",myusername);
                         startActivity(intent);
                     }
-                },1000);
+                },2000);
 
             }
         });
@@ -969,6 +969,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
 
+
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference("users").child(mAuth.getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("imageUrl", imageDownloadLink);
+        dbref.updateChildren(hashMap);
 
     }
 

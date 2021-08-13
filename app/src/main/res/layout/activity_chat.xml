@@ -56,6 +56,14 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/block"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/share_question" />
+
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -75,6 +83,14 @@
         android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/attachbtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/profileicon" />
 
 
         <EditText

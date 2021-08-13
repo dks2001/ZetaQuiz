@@ -59,6 +59,14 @@ public class ModelChat {
         this.dilihat = dilihat;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     String receiver;
 
     public ModelChat() {
