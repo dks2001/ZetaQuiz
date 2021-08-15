@@ -9,23 +9,26 @@
             android:title="My Account"
             android:icon="@drawable/myaccount"/>
 
+        <item
+            android:id="@+id/freiendrequest"
+            android:title="Friend Requests"
+            android:icon="@drawable/friend_request"/>
+
 
         <item
             android:id="@+id/addFriend"
-            android:title="Add Friend"
+            android:title="Find Friends"
             android:icon="@drawable/addfriend"/>
 
         <item
             android:id = "@+id/shareQuestion"
-            android:title = "Share your question"
-            android:icon="@drawable/share_question"/>
+            android:title = "Create a Post"
+            android:icon="@drawable/addpost"/>
 
         <item
             android:id="@+id/changePassword"
             android:title="Change Password"
-            android:icon="@drawable/password"/>
-
-
+            android:icon="@drawable/changepassword1"/>
 
         <item
             android:id="@+id/feedback"

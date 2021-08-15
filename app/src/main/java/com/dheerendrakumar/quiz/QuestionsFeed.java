@@ -77,6 +77,16 @@ public class QuestionsFeed extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questions_feed);
 
+        ImageView back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(QuestionsFeed.this,MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
       //  mAuth = FirebaseAuth.getInstance();
 
        /* progress = new ProgressDialog(QuestionsFeed.this);

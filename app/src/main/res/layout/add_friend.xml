@@ -25,16 +25,14 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="20"
                 android:clickable="true"
                 android:elevation="5dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/profileicon"
-                app:civ_border_color="	#FF0000"
-                app:civ_border_width="3dp" />
+                android:src="@drawable/profileicon"/>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -70,8 +68,8 @@
                android:layout_gravity="center"
                 android:layout_marginEnd="9dp"
                 android:background="@drawable/rounded_corner"
-                android:layout_weight="30"
-                android:textColor="@color/black"
+                android:layout_weight="40"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 android:text="follow" />
         </LinearLayout>

@@ -66,7 +66,7 @@ import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
-    ImageButton send;
+    ImageView send;
     boolean notify = false;
     EditText msg;
     String myUsername;

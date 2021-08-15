@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 
 public class VocabularyActivity extends AppCompatActivity {
-    ImageView imageView;
+    //ImageView imageView;
     Toolbar toolbar;
     private RecyclerView levelRecyclerview;
     //ArrayList<String> scores = new ArrayList<>();
@@ -34,14 +34,14 @@ public class VocabularyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vocabulary);
-        imageView = findViewById(R.id.vocabicon);
+       // imageView = findViewById(R.id.vocabicon);
         mAuth = FirebaseAuth.getInstance();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        imageView.setX(-800);
-        imageView.animate().translationX(0).setDuration(500).alpha(1);
+        //imageView.setX(-800);
+        //imageView.animate().translationX(0).setDuration(500).alpha(1);
         db = FirebaseFirestore.getInstance();
 
         ArrayList<String> scores = getIntent().getStringArrayListExtra("scores");

@@ -4,7 +4,7 @@
     android:id="@+id/my_toolbar"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/black"
+    android:background="#202020"
     android:gravity="start">
 
     <LinearLayout

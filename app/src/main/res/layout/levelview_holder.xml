@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="10dp"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="20dp"
     android:layout_marginEnd="10dp"
     android:layout_marginBottom="5dp"
     android:orientation="horizontal"
@@ -18,6 +18,7 @@
         android:layout_weight="80"
         android:background="@drawable/level_buttons"
         android:padding="10dp"
+        android:layout_marginEnd="10dp"
         android:text="level 1"
         android:textColor="@color/white" />
 
@@ -26,10 +27,13 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_weight="10"
+        android:layout_weight="15"
         android:gravity="center"
+        android:textSize="18sp"
+        android:background="@drawable/level_buttons"
+        android:textStyle="bold"
         android:text="0.0"
         android:textAlignment="center"
-        android:textColor="@color/black" />
+        android:textColor="@color/white" />
 
 </LinearLayout>

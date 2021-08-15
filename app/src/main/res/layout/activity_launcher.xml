@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="	#FFA500"
+    android:background="#0276e8"
     android:padding="5dp"
     tools:context=".LauncherActivity">
 
@@ -23,15 +23,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-
         <EditText
             android:id="@+id/nameEdittext"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_margin="5dp"
-            android:hint="Name"
             android:background="@drawable/edittext_border"
             android:ems="10"
+            android:hint="Name"
             android:inputType="textPersonName"
             android:padding="10dp"
             android:visibility="gone" />

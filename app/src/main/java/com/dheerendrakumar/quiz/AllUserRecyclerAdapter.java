@@ -13,6 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,6 +37,7 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
     ArrayList<String> friends;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    DatabaseReference databaseReference,FriendRequestRef;
     Context context;
 
     public AllUserRecyclerAdapter(Context context,ArrayList<String> name,ArrayList<String> username,ArrayList<String> imageurl,String myusername,ArrayList<String> friends) {
@@ -40,6 +47,8 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
         this.friends = friends;
         this.username = username;
         this.imageurl = imageurl;
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        FriendRequestRef = FirebaseDatabase.getInstance().getReference().child("friend_requests");
     }
 
 
@@ -73,11 +82,129 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
 
         }
 
+        MaintainFollowButton(holder,position);
+
         holder.getFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if(holder.getFollow().getText().equals("follow")) {
+
+                    holder.getFollow().setText("requested");
+                    holder.getFollow().setBackgroundResource(R.drawable.requestedbg);
+
+                    FriendRequestRef.child(myusername).child(username.get(position))
+                            .child("request_type").setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if(task.isSuccessful()) {
+                                FriendRequestRef.child(username.get(position)).child(myusername)
+                                        .child("request_type").setValue("received").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+
+
+
+
+
+                } else if(holder.getFollow().getText().equals("unfollow")) {
+
+
+                    holder.getFollow().setText("follow");
+
+                    db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+
+                                HashMap<String, Object> res = (HashMap<String, Object>) documentSnapshot.getData();
+
+                                if (username.get(position).equals(documentSnapshot.getString("username"))) {
+                                    String id = documentSnapshot.getId();
+                                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
+                                    friends.remove(myusername);
+                                    res.put("friends", friends);
+
+                                    db.collection("user").document(id)
+                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                } else if (myusername.equals(documentSnapshot.getString("username"))) {
+
+                                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
+                                    friends.remove(username.get(position));
+                                    res.put("friends", friends);
+
+                                    db.collection("user").document(mAuth.getUid())
+                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+
+                            }
+
+                        }
+                    });
+
+
+
+
+                } else if(holder.getFollow().getText().equals("requested")) {
+
+                    holder.getFollow().setText("follow");
+
+
+                    final DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("friend_requests").child(myusername).child(username.get(position));
+                    ref1.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            dataSnapshot.getRef().removeValue();
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    final DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("friend_requests").child(username.get(position)).child(myusername);
+                    ref2.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            dataSnapshot.getRef().removeValue();
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+
+
+
+               /* if(holder.getFollow().getText().equals("follow")) {
 
                     holder.getFollow().setText("UNFOLLOW");
 
@@ -174,17 +301,38 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
                         }
                     });
 
-                }
+                } */
 
             }
         });
-
-
 
     }
 
     @Override
     public int getItemCount() {
         return name.size();
+    }
+
+    public void MaintainFollowButton(AllUserViewHolder holder,int position) {
+
+        FriendRequestRef.child(myusername)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.hasChild(username.get(position))) {
+
+                            String request_type = snapshot.child(username.get(position)).child("request_type").getValue().toString();
+                            if(request_type.equals("sent")){
+                                holder.getFollow().setBackgroundResource(R.drawable.requestedbg);
+                                holder.getFollow().setText("requested");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 }

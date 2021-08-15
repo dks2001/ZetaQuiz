@@ -64,6 +64,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -94,9 +96,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Toolbar toolbar;
 
-    Button randomQuiz;
+    ImageView randomQuiz;
     LinearLayout dailyQuiz;
-    Button vocab;
+    ImageView vocab;
     LinearLayout category;
     ImageView profileButton;
     FirebaseFirestore db;
@@ -136,7 +138,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayList<String> friendsImageUrl;
     ArrayList<String> friendsname;
 
+    ArrayList<String> friendrequest;
+    ArrayList<String> friendRequestname;
+    ArrayList<String> friendRequestImageurl;
 
+    int numberOfPosts=0;
+    ArrayList<String> numberOfFriends;
 
 
     @Override
@@ -146,6 +153,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
+
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setY(-1000);
+        imageView.animate().translationY(0).setDuration(1000).alpha(1);
+
+        ImageView choosecategory = findViewById(R.id.chooseCategory);
+        choosecategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this,CategoryActivity.class);
+                startActivity(intent);
+            }
+        });
 
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -362,8 +383,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         email = document.getString("email");
                         imageUrl = document.getString("imageUrl");
                         myusername = document.getString("username");
+                        numberOfFriends = (ArrayList<String>) document.get("friends");
                         nameTextView.setText(document.getString("name"));
                         emailTextView.setText(document.getString("email"));
+                        Log.i("username",myusername);
 
 
                         if (!document.getString("imageUrl").equals("null")) {
@@ -398,29 +421,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
-
-        for (int i = 0; i < Category.category.length; i++) {
-            final int j = i;
-
-            LinearLayout categoryll = (LinearLayout) this.getLayoutInflater().inflate(R.layout.categoryview, null);
-            Button categoryButton = categoryll.findViewById(R.id.categoryButtons);
-
-            categoryButton.setText(Category.category[i]);
-            category.addView(categoryll);
-
-            categoryButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(MainActivity.this, Category.categorycode[j] + "", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, SpecificationsActivity.class);
-                    intent.putExtra("categorycode", Category.categorycode[j]);
-                    startActivity(intent);
-                }
-            });
-
-        }
-
 
 
         vocab.setOnClickListener(new View.OnClickListener() {
@@ -489,12 +489,142 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.myAccount:
 
+                db.collection("Questions")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                        ArrayList<String> sharedBy = (ArrayList<String>) document.get("SharedBy");
+                                        if(sharedBy.get(0).equals(mAuth.getUid())) {
+                                           numberOfPosts++;
+                                        }
+
+                                        Log.d("", document.getId() + " => " + document.getData());
+                                    }
+                                } else {
+                                    Log.d("", "Error getting documents: ", task.getException());
+                                }
+                            }
+                        }) ;
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
                         Intent intent2 = new Intent(MainActivity.this,MyAccount.class);
                         intent2.putExtra("imageUrll",imageUrl);
                         intent2.putExtra("email",email);
                         intent2.putExtra("name",myname);
                         intent2.putExtra("username",myusername);
+                        intent2.putExtra("numberOfPosts",numberOfPosts);
+                        intent2.putExtra("numberOfFriends",numberOfFriends.size());
                         startActivity(intent2);
+                    }
+                },500);
+
+
+
+
+                break;
+
+            case R.id.freiendrequest:
+
+                friendrequest = new ArrayList<>();
+                friendRequestImageurl = new ArrayList<>();
+                friendRequestname = new ArrayList<>();
+
+                Log.i("myusername",myusername);
+                Toast.makeText(this, myusername, Toast.LENGTH_SHORT).show();
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("friend_requests").child(myusername);
+
+                Query query = databaseReference.orderByChild("request_type").equalTo("received");
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                            Log.i("myusername",myusername);
+                            Log.i("blanlabla",dataSnapshot1.getKey());
+                            Log.i("blablabla",dataSnapshot1.getValue()+"");
+
+                            friendrequest.add(String.valueOf(dataSnapshot1.getKey()));
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                db.collection("user")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+
+
+                                    for(int i=0;i<friendrequest.size();i++) {
+
+                                        for(QueryDocumentSnapshot documentSnapshot :task.getResult()) {
+
+                                            if(friendrequest.get(i).equals(documentSnapshot.getString("username"))) {
+
+                                                    friendRequestname.add(documentSnapshot.getString("name"));
+                                                    friendRequestImageurl.add(documentSnapshot.getString("imageUrl"));
+                                                    Log.i("name",documentSnapshot.getString("name"));
+                                                    Log.i("username",friendrequest.get(i));
+                                                    Log.i("imageUrl",documentSnapshot.getString("imageUrl"));
+
+                                            }
+
+                                        }
+
+                                    }
+
+
+
+                                  /*  for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                        String request =  document.getString("username");
+                                        for(int i=0;i<friendrequest.size();i++) {
+                                            if(friendrequest.get(i).equals(request)) {
+                                                friendRequestname.add(document.getString("name"));
+                                                friendRequestImageurl.add(document.getString("imageUrl"));
+                                                Log.i("name",document.getString("name"));
+                                                Log.i("username",friendrequest.get(i));
+                                                Log.i("imageUrl",document.getString("imageUrl"));
+                                            }
+                                        }
+
+                                        Log.d("", document.getId() + " => " + document.getData());
+                                    }  */
+
+
+                                }
+                            }
+                        }) ;
+
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(MainActivity.this,FriendRequests.class);
+                        intent.putStringArrayListExtra("name",friendRequestname);
+                        intent.putStringArrayListExtra("username",friendrequest);
+                        intent.putStringArrayListExtra("imageUrl",friendRequestImageurl);
+                        intent.putExtra("myUsername",myusername);
+
+                        startActivity(intent);
+                    }
+                },2000);
+
+
+
 
 
                 break;
@@ -556,6 +686,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Button cancelShare = (Button) shareview.findViewById(R.id.cancelShareQuestion);
                 Button share = (Button) shareview.findViewById(R.id.confirmQuestionShare);
                 EditText myQuestion = (EditText) shareview.findViewById(R.id.sharemyQuestion);
+                ImageView back = (ImageView) shareview.findViewById(R.id.back);
+
+                back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sharepopupWindow.dismiss();
+                    }
+                });
 
                 sharepopupWindow.showAtLocation(shareview,Gravity.CENTER,0,0);
                 cancelShare.setOnClickListener(new View.OnClickListener() {
@@ -646,6 +784,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 EditText confirmNewPassword = (EditText) changePasswordView.findViewById(R.id.confirmNewPassword);
                 Button cancelPasswordChange = (Button) changePasswordView.findViewById(R.id.cancelPasswordChange);
                 Button confirmPasswordChange = (Button) changePasswordView.findViewById(R.id.confirmPasswordChange);
+                ImageView back2 = (ImageView) changePasswordView.findViewById(R.id.back);
+
+                back2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        changePasswordPopup.dismiss();
+                    }
+                });
 
 
                 changePasswordPopup.showAtLocation(changePasswordView,Gravity.CENTER,0,0);
@@ -713,6 +859,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Button cancel = (Button) view.findViewById(R.id.cancelFeedback);
                 Button submitFeedback = (Button) view.findViewById(R.id.submitFeedback);
                 EditText myfeedback = (EditText) view.findViewById(R.id.myFeedback);
+                ImageView back3 = (ImageView) view.findViewById(R.id.back);
+
+                back3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }
+                });
 
                 popupWindow.showAtLocation(view,Gravity.CENTER,0,0);
                 cancel.setOnClickListener(new View.OnClickListener() {

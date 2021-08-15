@@ -38,6 +38,8 @@ public class MyAccount extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseFirestore db;
     boolean exist = false;
+    int numberOfFriends=0;
+    int numberOfPosts = 0;
 
     ArrayList<String> myQuestions = new ArrayList<>();
     ArrayList<String> likesOnMyPost = new ArrayList<>() ;
@@ -54,16 +56,38 @@ public class MyAccount extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account);
 
+        ImageView back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyAccount.this,MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         ImageView myProfile = findViewById(R.id.friendprofile);
-        EditText username = findViewById(R.id.myusername);
-        ImageView editusername = findViewById(R.id.editUsername);
+        TextView username = findViewById(R.id.myusername);
         TextView emaill = findViewById(R.id.myEmail);
         TextView myname = findViewById(R.id.myname);
         numOfPosts = findViewById(R.id.numberOfPosts);
         TextView numOfFriends = findViewById(R.id.numberOfFriends);
+
+
+        Intent intent = getIntent();
+        imageUrll = intent.getStringExtra("imageUrll");
+        name = intent.getStringExtra("name");
+        email = intent.getStringExtra("email");
+        userName = intent.getStringExtra("username");
+        numberOfFriends = intent.getIntExtra("numberOfFriends",numberOfFriends);
+        numberOfPosts = intent.getIntExtra("numberOfPosts",numberOfPosts);
+
+        numOfPosts.setText(String.valueOf(numberOfPosts));
+        numOfFriends.setText(String.valueOf(numberOfFriends));
+
 
         numOfFriends.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,84 +148,6 @@ public class MyAccount extends AppCompatActivity {
 
             }
         });
-
-
-        editusername.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (editusername.getTag().equals("editmyusername")) {
-                    username.setEnabled(true);
-                    editusername.setTag("update");
-                    editusername.setImageResource(R.drawable.updateusername);
-                } else {
-
-                    db.collection("user")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                            String usernamee = document.getString("username");
-                                            if(usernamee.equals(username.getText().toString())) {
-                                                username.setText("Username already exist.");
-                                                username.setVisibility(View.VISIBLE);
-                                                exist = true;
-                                                break;
-                                            } else {
-                                                exist = false;
-                                            }
-
-
-                                            Log.d("", document.getId() + " => " + document.getData());
-                                        }
-                                        if(exist==false) {
-
-
-                                            db.collection("user").document(mAuth.getUid())
-                                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                                                    DocumentSnapshot documentSnapshot = task.getResult();
-                                                    HashMap<String,Object> res = (HashMap<String, Object>) documentSnapshot.getData();
-                                                    //String usernamee = documentSnapshot.getString("username");
-                                                    res.put("username",username.getText().toString());
-
-                                                    db.collection("user").document(mAuth.getUid())
-                                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            Toast.makeText(MyAccount.this, "updated", Toast.LENGTH_SHORT).show();
-                                                            editusername.setImageResource(R.drawable.edit);
-                                                        }
-                                                    });
-
-                                                }
-                                            });
-
-                                            username.setEnabled(false);
-                                            editusername.setTag("editmyusername");
-
-                                        }
-
-                                    } else {
-                                        Log.d("", "Error getting documents: ", task.getException());
-                                    }
-                                }
-                            }) ;
-
-                }
-            }
-        });
-
-
-        Intent intent = getIntent();
-        imageUrll = intent.getStringExtra("imageUrll");
-        name = intent.getStringExtra("name");
-        email = intent.getStringExtra("email");
-        userName = intent.getStringExtra("username");
 
 
         if(!imageUrll.equals("null")) {

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,7 +30,7 @@ public class Friends extends AppCompatActivity {
         myfriends = findViewById(R.id.myfriends);
         mAuth = FirebaseAuth.getInstance();
 
-        EditText searchUser = findViewById(R.id.searchuser);
+        TextView searchUser = findViewById(R.id.searchuser);
         searchUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

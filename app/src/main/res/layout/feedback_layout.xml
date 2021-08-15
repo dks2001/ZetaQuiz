@@ -6,6 +6,8 @@
     android:background="@color/black"
     android:orientation="vertical">
 
+    <include layout="@layout/toolbar"/>
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
@@ -21,20 +23,21 @@
     <EditText
         android:id="@+id/myFeedback"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="100dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/edittext_white_border"
         android:hint="Your Feedback..."
         android:padding="10dp"
+        android:gravity="top|left"
         android:textColor="@color/black"
         android:textColorHint="@color/black" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:gravity="bottom"
         android:orientation="horizontal">
 
@@ -46,8 +49,10 @@
             android:layout_margin="5dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
             android:layout_weight="50"
-            android:background="@android:color/holo_blue_dark"
+            android:background="@drawable/rounded_corner"
             android:padding="5dp"
             android:text="cancel" />
 
@@ -57,9 +62,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:layout_marginStart="10dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
             android:layout_marginEnd="10dp"
             android:layout_weight="50"
-            android:background="@android:color/holo_blue_dark"
+            android:background="@drawable/rounded_corner"
             android:padding="5dp"
             android:text="submit" />
 

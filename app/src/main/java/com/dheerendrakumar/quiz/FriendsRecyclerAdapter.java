@@ -76,7 +76,7 @@ public class FriendsRecyclerAdapter extends RecyclerView.Adapter<FriendsViewHold
             public boolean onLongClick(View v) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Are you sure you want to delete the post?");
+                builder.setMessage("Are you sure you want to delete user?");
                 builder.setCancelable(true);
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override

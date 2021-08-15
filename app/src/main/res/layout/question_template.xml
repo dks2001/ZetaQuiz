@@ -12,9 +12,9 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="2dp"
         android:layout_marginBottom="5dp">
 
 
@@ -39,8 +39,7 @@
                     android:elevation="5dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/profileicon"
-                    app:civ_border_color="#FF0000"
-                    app:civ_border_width="3dp" />
+                     />
 
                 <TextView
                     android:id="@+id/usernameSharedBy"
@@ -58,9 +57,9 @@
                 <ImageView
                     android:id="@+id/deleteQuestion"
                     android:layout_width="0dp"
-                    android:layout_height="25dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center"
-                    android:layout_weight="8"
+                    android:layout_weight="7"
                     android:src="@drawable/delete" />
 
 

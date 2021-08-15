@@ -4,11 +4,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +35,8 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.AdapterChat.Myholder> {
     private static final int MSG_TYPE_LEFT = 0;
@@ -67,7 +73,21 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
         calendar.setTimeInMillis(Long.parseLong(timeStamp));
         String timedate = DateFormat.format("dd/MM/yyyy hh:mm aa", calendar).toString();
         holder.message.setText(message);
-        holder.time.setText(timedate);
+
+
+        holder.message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(holder.time.getVisibility()==View.VISIBLE) {
+                    holder.time.setVisibility(View.GONE);
+                } else {
+                    holder.time.setVisibility(View.VISIBLE);
+                    holder.time.setText(timedate);
+                }
+
+            }
+        });
 
         if (type.equals("text")) {
             holder.message.setVisibility(View.VISIBLE);
@@ -78,6 +98,29 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
             holder.mimage.setVisibility(View.VISIBLE);
             Picasso.with(context).load(message).into(holder.mimage);
         }
+
+
+        holder.mimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                LayoutInflater sharelayoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+                View shareview = sharelayoutInflater.inflate(R.layout.open_image,null);
+
+                int width = LinearLayout.LayoutParams.MATCH_PARENT;
+                int height = LinearLayout.LayoutParams.MATCH_PARENT;
+                boolean focusable = true;
+
+                PopupWindow sharepopupWindow = new PopupWindow(shareview,width,height,focusable);
+
+                ImageView imageView = (ImageView) shareview.findViewById(R.id.openImage);
+                Picasso.with(context).load(message).into(imageView);
+
+                sharepopupWindow.showAtLocation(shareview, Gravity.CENTER,0,0);
+
+            }
+        });
+
 
 
         holder.msglayput.setOnLongClickListener(new View.OnLongClickListener() {
@@ -176,11 +219,10 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
                         // any two of below can be used
                          dataSnapshot1.getRef().removeValue();
 
-
                         Toast.makeText(context,"Message Deleted.....",Toast.LENGTH_LONG).show();
 
                     } else {
-                        Toast.makeText(context, "you can delet only your msg....", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "you can delete only your message....", Toast.LENGTH_LONG).show();
                     }
                 }
             }
