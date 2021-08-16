@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayList<String> friendRequestname;
     ArrayList<String> friendRequestImageurl;
 
-    int numberOfPosts=0;
+    ArrayList<String> numberOfPosts;
     ArrayList<String> numberOfFriends;
 
 
@@ -286,6 +286,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
 
+                ProgressDialog progress = new ProgressDialog(MainActivity.this);
+                progress.setTitle("Loading");
+                progress.setMessage("Wait while loading...");
+                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progress.show();
+
                 friendsname = new ArrayList<>();
                 friendsImageUrl = new ArrayList<>();
                 myfriends = new ArrayList<>();
@@ -332,8 +338,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.putStringArrayListExtra("imageurl",friendsImageUrl);
                         intent.putExtra("myUsername",myusername);
                         startActivity(intent);
+                        progress.dismiss();
                     }
-                },2000);
+                },1500);
 
             }
         });
@@ -489,6 +496,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.myAccount:
 
+                numberOfPosts = new ArrayList<>();
+
                 db.collection("Questions")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -499,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                         ArrayList<String> sharedBy = (ArrayList<String>) document.get("SharedBy");
                                         if(sharedBy.get(0).equals(mAuth.getUid())) {
-                                           numberOfPosts++;
+                                            numberOfPosts.add(mAuth.getUid());
                                         }
 
                                         Log.d("", document.getId() + " => " + document.getData());
@@ -518,7 +527,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent2.putExtra("email",email);
                         intent2.putExtra("name",myname);
                         intent2.putExtra("username",myusername);
-                        intent2.putExtra("numberOfPosts",numberOfPosts);
+                        intent2.putExtra("numberOfPosts",numberOfPosts.size());
                         intent2.putExtra("numberOfFriends",numberOfFriends.size());
                         startActivity(intent2);
                     }
@@ -585,26 +594,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         }
 
                                     }
-
-
-
-                                  /*  for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                        String request =  document.getString("username");
-                                        for(int i=0;i<friendrequest.size();i++) {
-                                            if(friendrequest.get(i).equals(request)) {
-                                                friendRequestname.add(document.getString("name"));
-                                                friendRequestImageurl.add(document.getString("imageUrl"));
-                                                Log.i("name",document.getString("name"));
-                                                Log.i("username",friendrequest.get(i));
-                                                Log.i("imageUrl",document.getString("imageUrl"));
-                                            }
-                                        }
-
-                                        Log.d("", document.getId() + " => " + document.getData());
-                                    }  */
-
-
                                 }
                             }
                         }) ;
@@ -621,7 +610,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         startActivity(intent);
                     }
-                },2000);
+                },1000);
 
 
 

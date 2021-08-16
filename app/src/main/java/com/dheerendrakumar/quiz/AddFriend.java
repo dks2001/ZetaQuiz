@@ -22,15 +22,6 @@ public class AddFriend extends AppCompatActivity {
         setContentView(R.layout.activity_add_friend);
         recyclerView = findViewById(R.id.allUsers);
 
-        ImageView back = findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AddFriend.this,MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
 
         ArrayList<String> name = getIntent().getStringArrayListExtra("name");
         ArrayList<String> username = getIntent().getStringArrayListExtra("username");

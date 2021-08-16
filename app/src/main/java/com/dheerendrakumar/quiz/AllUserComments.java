@@ -3,6 +3,7 @@ package com.dheerendrakumar.quiz;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 
 import android.content.DialogInterface;
@@ -70,8 +71,6 @@ public class AllUserComments extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
-
-
         myComments = new ArrayList<>();
 
         if (android.os.Build.VERSION.SDK_INT > 9) {

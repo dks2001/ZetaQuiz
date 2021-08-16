@@ -39,10 +39,13 @@ public class Friends extends AppCompatActivity {
             }
         });
 
+
         ArrayList<String> name = getIntent().getStringArrayListExtra("name");
         ArrayList<String> username = getIntent().getStringArrayListExtra("username");
         ArrayList<String> imageurl = getIntent().getStringArrayListExtra("imageurl");
         String myUsername = getIntent().getStringExtra("myUsername");
+
+
 
         myfriends.setNestedScrollingEnabled(false);
         myfriends.setAdapter(new FriendsRecyclerAdapter(Friends.this,name,username,imageurl,myUsername));

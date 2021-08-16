@@ -123,7 +123,7 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
 
 
 
-        holder.msglayput.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.message.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
@@ -144,7 +144,7 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
                 });
                 builder.create().show();
 
-                return true;
+                return false;
             }
         });
 
