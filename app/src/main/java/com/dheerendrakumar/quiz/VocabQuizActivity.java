@@ -363,7 +363,7 @@ public class VocabQuizActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         popupWindow.dismiss();
-                        Intent intent = new Intent(VocabQuizActivity.this,VocabularyActivity.class);
+                        Intent intent = new Intent(VocabQuizActivity.this,MainActivity.class);
                         startActivity(intent);
                         finish();
                     }

@@ -301,6 +301,7 @@ public class QuizActivity extends AppCompatActivity {
                 finish.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        popupWindow.dismiss();
                         Intent intent = new Intent(QuizActivity.this,MainActivity.class);
                         startActivity(intent);
                         finish();

@@ -290,6 +290,7 @@ public class TrueFalseActivity extends AppCompatActivity {
                 finish.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        popupWindow.dismiss();
                         Intent intent = new Intent(TrueFalseActivity.this,MainActivity.class);
                         startActivity(intent);
                         finish();

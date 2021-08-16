@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -90,6 +91,7 @@ public class LauncherActivity extends AppCompatActivity {
         signinButton = findViewById(R.id.signinButton);
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
+        TextView logintxtview = findViewById(R.id.logintextview);
         TextView forgotPassword = findViewById(R.id.forgotPasswordtextView);
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,6 +194,18 @@ public class LauncherActivity extends AppCompatActivity {
                 }
         });
 
+        logintxtview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nameEditText.setVisibility(View.GONE);
+                usernameEdittext.setVisibility(View.GONE);
+                signinButton.setText("sign in");
+                signUpTextView.setVisibility(View.VISIBLE);
+                logintxtview.setVisibility(View.GONE);
+
+            }
+        });
+
 
 
         signUpTextView.setOnClickListener(new View.OnClickListener() {
@@ -201,6 +215,9 @@ public class LauncherActivity extends AppCompatActivity {
                 nameEditText.setVisibility(View.VISIBLE);
                 usernameEdittext.setVisibility(View.VISIBLE);
                 signinButton.setText("SIGN UP");
+                signUpTextView.setVisibility(View.GONE);
+                logintxtview.setVisibility(View.VISIBLE);
+
             }
         });
 
@@ -397,6 +414,14 @@ public class LauncherActivity extends AppCompatActivity {
         EditText emailForPassword = (EditText) forgetPasswordView.findViewById(R.id.forgotpasswordEmail);
         Button cancel = (Button) forgetPasswordView.findViewById(R.id.cancelPasswordChange);
         Button confirm = (Button) forgetPasswordView.findViewById(R.id.confirmPasswordChange);
+        ImageView back = (ImageView) forgetPasswordView.findViewById(R.id.back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
 
         popupWindow.showAtLocation(forgetPasswordView, Gravity.CENTER,0,0);
         cancel.setOnClickListener(new View.OnClickListener() {

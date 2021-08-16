@@ -374,6 +374,7 @@ public class DailyQuizActivity extends AppCompatActivity {
                 finish.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        popupWindow.dismiss();
                         Intent intent = new Intent(DailyQuizActivity.this,MainActivity.class);
                         startActivity(intent);
                         finish();
