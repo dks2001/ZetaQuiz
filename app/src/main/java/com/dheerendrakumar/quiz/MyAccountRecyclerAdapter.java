@@ -116,7 +116,7 @@ public class MyAccountRecyclerAdapter extends RecyclerView.Adapter<QuestionViewH
                                 .set(ques).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -153,7 +153,7 @@ public class MyAccountRecyclerAdapter extends RecyclerView.Adapter<QuestionViewH
                                         .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -166,7 +166,7 @@ public class MyAccountRecyclerAdapter extends RecyclerView.Adapter<QuestionViewH
                                         .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -200,7 +200,7 @@ public class MyAccountRecyclerAdapter extends RecyclerView.Adapter<QuestionViewH
                                     .set(ques).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -226,7 +226,7 @@ public class MyAccountRecyclerAdapter extends RecyclerView.Adapter<QuestionViewH
                                     .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(context, "unliked", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(context, "unliked", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

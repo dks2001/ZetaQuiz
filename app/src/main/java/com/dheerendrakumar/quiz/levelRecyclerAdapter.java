@@ -98,12 +98,12 @@ public class levelRecyclerAdapter extends  RecyclerView.Adapter<levelViewHolder>
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Log.d("", document.getId() + " => " + document.getData());
+                                        //Log.d("", document.getId() + " => " + document.getData());
                                         questions.add(document.getId());
                                         corrects.add(document.getString("correct"));
                                         ArrayList<String> group = (ArrayList<String>) document.get("incorrect");
                                         incorrects.add(group);
-                                        Log.i("incor",group.get(0));
+                                        //Log.i("incor",group.get(0));
 
                                     }
 
@@ -124,7 +124,7 @@ public class levelRecyclerAdapter extends  RecyclerView.Adapter<levelViewHolder>
                                     },2000);
 
                                 } else {
-                                    Log.d("", "Error getting documents: ", task.getException());
+                                   // Log.d("", "Error getting documents: ", task.getException());
                                 }
                             }
                         });

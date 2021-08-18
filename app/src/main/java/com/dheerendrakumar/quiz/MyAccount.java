@@ -184,10 +184,11 @@ public class MyAccount extends AppCompatActivity {
                                             commentsOnMyPost.add(document.getString("numberOfComments"));
                                         }
 
-                                        Log.d("", document.getId() + " => " + document.getData());
+                                       // Log.d("", document.getId() + " => " + document.getData());
                                     }
                                 } else {
-                                    Log.d("", "Error getting documents: ", task.getException());
+                                    //Log.d("", "Error getting documents: ", task.getException());
+                                    Toast.makeText(MyAccount.this, "error", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }) ;

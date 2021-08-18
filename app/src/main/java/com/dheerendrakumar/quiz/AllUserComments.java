@@ -137,12 +137,12 @@ public class AllUserComments extends AppCompatActivity {
 
                         }
 
-                        Log.d("", "DocumentSnapshot data: " + document.getData());
+                        //Log.d("", "DocumentSnapshot data: " + document.getData());
                     } else {
-                        Log.d("", "No such document");
+                        //Log.d("", "No such document");
                     }
                 } else {
-                    Log.d("", "get failed with ", task.getException());
+                    //Log.d("", "get failed with ", task.getException());
                 }
             }
         });
@@ -221,7 +221,7 @@ public class AllUserComments extends AppCompatActivity {
                                                                 .set(allComments).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
-                                                                Toast.makeText(AllUserComments.this, "deleted", Toast.LENGTH_SHORT).show();
+                                                                //Toast.makeText(AllUserComments.this, "deleted", Toast.LENGTH_SHORT).show();
                                                             }
                                                         }).addOnFailureListener(new OnFailureListener() {
                                                             @Override
@@ -317,7 +317,7 @@ public class AllUserComments extends AppCompatActivity {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                Log.d("", "DocumentSnapshot successfully written!");
+                                                //Log.d("", "DocumentSnapshot successfully written!");
                                                 // Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
                                                 // startActivity(intent);
 
@@ -328,7 +328,8 @@ public class AllUserComments extends AppCompatActivity {
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Log.w("", "Error writing document", e);
+                                                Toast.makeText(AllUserComments.this, "error120", Toast.LENGTH_SHORT).show();
+                                                //Log.w("", "Error writing document", e);
                                             }
                                         });
 
@@ -351,7 +352,7 @@ public class AllUserComments extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Log.d("", "DocumentSnapshot successfully written!");
+                                           // Log.d("", "DocumentSnapshot successfully written!");
                                             // Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
                                             // startActivity(intent);
 
@@ -361,7 +362,8 @@ public class AllUserComments extends AppCompatActivity {
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.w("", "Error writing document", e);
+                                           // Log.w("", "Error writing document", e);
+                                            Toast.makeText(AllUserComments.this, "error101", Toast.LENGTH_SHORT).show();
                                         }
                                     });
 

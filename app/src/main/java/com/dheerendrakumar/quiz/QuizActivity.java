@@ -122,7 +122,7 @@ public class QuizActivity extends AppCompatActivity {
                 scoreTextview.setText("Score : "+score+" / "+numberOfQuestions);
                 disableAllQuizButtons(false);
                 btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
-                Toast.makeText(QuizActivity.this, "right", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(QuizActivity.this, "right", Toast.LENGTH_SHORT).show();
                 totalScore++;
                 questions.remove(0);
                 icAnswers = new ArrayList<>();

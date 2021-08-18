@@ -138,7 +138,7 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
                                             .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
+                                           // Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
                                         }
                                     });
 
@@ -152,7 +152,7 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
                                             .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -201,107 +201,6 @@ public class AllUserRecyclerAdapter extends RecyclerView.Adapter<AllUserViewHold
                     });
 
                 }
-
-
-
-               /* if(holder.getFollow().getText().equals("follow")) {
-
-                    holder.getFollow().setText("UNFOLLOW");
-
-                    db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-
-                                HashMap<String, Object> res = (HashMap<String, Object>) documentSnapshot.getData();
-
-                                if (username.get(position).equals(documentSnapshot.getString("username"))) {
-                                    String id = documentSnapshot.getId();
-                                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
-                                    ArrayList<String> chatList = (ArrayList<String>) documentSnapshot.get("chatList");
-                                    friends.add(myusername);
-                                    chatList.add(myusername);
-                                    res.put("friends", friends);
-                                    res.put("chatList",chatList);
-
-                                    db.collection("user").document(id)
-                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
-                                } else if (myusername.equals(documentSnapshot.getString("username"))) {
-
-                                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
-                                    ArrayList<String> chatList = (ArrayList<String>) documentSnapshot.get("chatList");
-                                    friends.add(username.get(position));
-                                    chatList.add(username.get(position));
-                                    res.put("friends", friends);
-                                    res.put("chatList",chatList);
-
-                                    db.collection("user").document(mAuth.getUid())
-                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-
-                            }
-
-                        }
-                    });
-                } else {
-
-                    holder.getFollow().setText("follow");
-
-                    db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-
-                                HashMap<String, Object> res = (HashMap<String, Object>) documentSnapshot.getData();
-
-                                if (username.get(position).equals(documentSnapshot.getString("username"))) {
-                                    String id = documentSnapshot.getId();
-                                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
-                                    friends.remove(myusername);
-                                    res.put("friends", friends);
-
-                                    db.collection("user").document(id)
-                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
-                                } else if (myusername.equals(documentSnapshot.getString("username"))) {
-
-                                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("friends");
-                                    friends.remove(username.get(position));
-                                    res.put("friends", friends);
-
-                                    db.collection("user").document(mAuth.getUid())
-                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(context, "done", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-
-                            }
-
-                        }
-                    });
-
-                } */
 
             }
         });

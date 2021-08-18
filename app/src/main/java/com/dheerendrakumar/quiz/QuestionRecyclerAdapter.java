@@ -128,14 +128,12 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
                                 .set(ques).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
                             }
                         });
 
                     }
                 });
-
-
 
 
                 if (holder.getLikePost().getTag().toString().equals("unliked")) {
@@ -165,7 +163,7 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
                                         .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -178,7 +176,7 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
                                         .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(context, "liked", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -212,7 +210,7 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
                                     .set(ques).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
+                                   // Toast.makeText(context, "like done", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
@@ -238,7 +236,7 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
                                     .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(context, "unliked", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(context, "unliked", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -270,8 +268,8 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
             @Override
             public void onClick(View v) {
 
-                Log.i("mmmm",userName);
-                Log.i("nnnn",holder.getUsername().getText().toString());
+               // Log.i("mmmm",userName);
+               // Log.i("nnnn",holder.getUsername().getText().toString());
 
                 if(holder.getUsername().getText().toString().equals(userName)) {
 
@@ -288,7 +286,7 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
                                 @Override
                                 public void onSuccess(Void aVoid) {
 
-                                    Toast.makeText(context, "deleted", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(context, "deleted", Toast.LENGTH_SHORT).show();
                                     int newPosition = holder.getAdapterPosition();
                                     question.remove(newPosition);
                                     name.remove(newPosition);
@@ -326,23 +324,5 @@ public class QuestionRecyclerAdapter extends RecyclerView.Adapter<QuestionViewHo
     public int getItemCount() {
         return question.size();
     }
-
-  /*  public static Bitmap getBitmapFromURL(String src) {
-        try {
-            Log.e("src", src);
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            Log.e("Bitmap", myBitmap + "");
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("Exception", e.getMessage());
-            return null;
-        }
-    } */
 
 }

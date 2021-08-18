@@ -99,7 +99,7 @@ public class VocabQuizActivity extends AppCompatActivity {
                 icAnswers = incorrectAnswers.get(0);
                 icAnswers.add(correctAnswers.get(0));
                 Collections.shuffle(icAnswers);
-                textView.setText(questions.get(0));
+                textView.setText("Guess the meaning or synonym of the word : "+questions.get(0));
 
                 for(int j=0;j<icAnswers.size();j++) {
                     Button icAns = (Button) linearLayout.getChildAt(j);
@@ -133,7 +133,7 @@ public class VocabQuizActivity extends AppCompatActivity {
                 scoreTextview.setText("Score : "+score+" / "+numberOfQuestions);
                 disableAllQuizButtons(false);
                 btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
-                Toast.makeText(VocabQuizActivity.this, "right", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(VocabQuizActivity.this, "right", Toast.LENGTH_SHORT).show();
 
                 questions.remove(0);
                 icAnswers = new ArrayList<>();
@@ -237,7 +237,7 @@ public class VocabQuizActivity extends AppCompatActivity {
 
         qn++;
         questionNumber.setText("Question Number : "+qn);
-        textView.setText(questions.get(0));
+        textView.setText("Guess the meaning or synonym of the word : "+questions.get(0));
         icAnswers = incorrectAnswers.get(0);
         icAnswers.add(correctAnswers.get(0));
         Collections.shuffle(icAnswers);
@@ -332,7 +332,7 @@ public class VocabQuizActivity extends AppCompatActivity {
                                         .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(VocabQuizActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(VocabQuizActivity.this, "updated", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             } else {
@@ -346,7 +346,7 @@ public class VocabQuizActivity extends AppCompatActivity {
                                         .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(VocabQuizActivity.this, "updated", Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(VocabQuizActivity.this, "updated", Toast.LENGTH_SHORT).show();
                                     }
                                 });
 

@@ -122,35 +122,42 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
         });
 
 
-
         holder.message.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
             public boolean onLongClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Delete Message");
-                builder.setMessage("Are You Sure To Delete This Messgae");
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteMsg(position);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.create().show();
 
-                return false;
+                if(list.get(position).getSender().equals(myUsername)) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle(R.string.delete_message);
+                    builder.setMessage(R.string.Are_You_Sure_To_Delete_This_Messgae);
+                    builder.setPositiveButton(R.string.Delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteMsg(position);
+                        }
+                    });
+                    builder.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.create().show();
+
+                    return false;
+                }
+
+                return true;
             }
         });
 
         holder.mimage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+
+                 if (list.get(position).getSender().equals(myUsername)) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Delete Message");
@@ -169,10 +176,14 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
                 });
                 builder.create().show();
 
-
                 return true;
             }
+
+
+                    return false;
+            }
         });
+
     }
 
     private void deleteMsg(int position) {
@@ -190,7 +201,6 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
 					 HashMap<String, Object> hashMap = new HashMap<>();
 						hashMap.put("messsage", "This Message Was Deleted");
 						dataSnapshot1.getRef().updateChildren(hashMap);
-						Toast.makeText(context,"Message Deleted.....",Toast.LENGTH_LONG).show();
 
                     } else {
                         Toast.makeText(context, "you can delet only your msg....", Toast.LENGTH_LONG).show();
@@ -218,8 +228,6 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
                     if (dataSnapshot1.child("sender").getValue().equals(myUsername)) {
                         // any two of below can be used
                          dataSnapshot1.getRef().removeValue();
-
-                        Toast.makeText(context,"Message Deleted.....",Toast.LENGTH_LONG).show();
 
                     } else {
                         Toast.makeText(context, "you can delete only your message....", Toast.LENGTH_LONG).show();
@@ -252,7 +260,7 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
 
     class Myholder extends RecyclerView.ViewHolder {
 
-        TextView message, time, isSee;
+        TextView message, time, isSeen;
         LinearLayout msglayput;
         ImageView mimage;
 
@@ -260,7 +268,7 @@ public class AdapterChat extends RecyclerView.Adapter<com.dheerendrakumar.quiz.A
             super(itemView);
             message = itemView.findViewById(R.id.msgc);
             time = itemView.findViewById(R.id.timetv);
-            isSee = itemView.findViewById(R.id.isSeen);
+            isSeen = itemView.findViewById(R.id.isSeen);
             msglayput = itemView.findViewById(R.id.msglayout);
             mimage = itemView.findViewById(R.id.images);
         }

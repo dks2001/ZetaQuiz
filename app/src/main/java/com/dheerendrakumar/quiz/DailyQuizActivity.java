@@ -136,7 +136,7 @@ public class DailyQuizActivity extends AppCompatActivity {
                 disableAllQuizButtons(false);
 
 
-                Toast.makeText(DailyQuizActivity.this, "right", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(DailyQuizActivity.this, "right", Toast.LENGTH_SHORT).show();
 
 
                 questionTexts.remove(0);
@@ -218,8 +218,8 @@ public class DailyQuizActivity extends AppCompatActivity {
                         questionTexts.add(str2);
                         correctAnswer.add(questionAnswer);
 
-                        Log.i("question",questionText);
-                        Log.i("answer",questionAnswer);
+                        //Log.i("question",questionText);
+                        //Log.i("answer",questionAnswer);
 
                         ArrayList<String> ica = new ArrayList<>();
 

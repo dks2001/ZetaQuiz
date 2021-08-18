@@ -49,6 +49,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class LauncherActivity extends AppCompatActivity {
 
@@ -66,9 +67,6 @@ public class LauncherActivity extends AppCompatActivity {
     Handler handler;
     Map<String, Object> userrr;
     boolean exist = false;
-
-
-
 
     HashMap<String,String> database = new HashMap<>();
 
@@ -117,8 +115,8 @@ public class LauncherActivity extends AppCompatActivity {
                         } else {
 
                             ProgressDialog progress = new ProgressDialog(LauncherActivity.this);
-                            progress.setTitle("Loading");
-                            progress.setMessage("Wait while loading...");
+                            progress.setTitle(getString(R.string.Loading));
+                            progress.setMessage(getString(R.string.Wait_while_loading));
                             progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
                             progress.show();
 
@@ -129,14 +127,14 @@ public class LauncherActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
                                                 // Sign in success, update UI with the signed-in user's information
-                                                Log.d("ok", "signInWithEmail:success");
+                                                //Log.d("ok", "signInWithEmail:success");
                                                 FirebaseUser user = mAuth.getCurrentUser();
                                                 Intent intent = new Intent(LauncherActivity.this, MainActivity.class);
                                                 startActivity(intent);
                                                 progress.dismiss();
                                             } else {
                                                 // If sign in fails, display a message to the user.
-                                                Log.w("no", "signInWithEmail:failure", task.getException());
+                                                //Log.w("no", "signInWithEmail:failure", task.getException());
                                                 Toast.makeText(LauncherActivity.this, "Authentication failed.",
                                                         Toast.LENGTH_SHORT).show();
                                                 progress.dismiss();
@@ -183,7 +181,7 @@ public class LauncherActivity extends AppCompatActivity {
                                                 }
 
                                             } else {
-                                                Log.d("", "Error getting documents: ", task.getException());
+                                               // Log.d("", "Error getting documents: ", task.getException());
                                             }
                                         }
                                     }) ;
@@ -250,7 +248,7 @@ public class LauncherActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("ok", "createUserWithEmail:success");
+                           // Log.d("ok", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             Map<String, Object> newUser = new HashMap<>();
@@ -278,7 +276,7 @@ public class LauncherActivity extends AppCompatActivity {
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("no", "createUserWithEmail:failure", task.getException());
+                            //Log.w("no", "createUserWithEmail:failure", task.getException());
                             Toast.makeText(LauncherActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                             progress.dismiss();
@@ -303,14 +301,15 @@ public class LauncherActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.d("pppp", "firebaseAuthWithGoogle:" + account.getEmail());
+                //Log.d("pppp", "firebaseAuthWithGoogle:" + account.getEmail());
 
                 userrr = new HashMap<>();
                 userrr.put("name", account.getDisplayName());
                 userrr.put("email", account.getEmail());
                 userrr.put("imageUrl", account.getPhotoUrl()+"");
                 SecureRandom random = new SecureRandom();
-                int rand = random.nextInt(1000);
+
+                int rand = random.nextInt(90000);
                 userrr.put("username","guest"+rand);
                 ArrayList<String> friends = new ArrayList<>();
                 ArrayList<String> chatList = new ArrayList<>();
@@ -318,12 +317,17 @@ public class LauncherActivity extends AppCompatActivity {
                 userrr.put("friends",friends);
                 Log.i("image",account.getPhotoUrl()+"");
 
+                database.put("name",account.getDisplayName());
+                database.put("username","guest"+rand);
+                database.put("imageUrl",account.getPhotoUrl()+"");
+
+
                 firebaseAuthWithGoogle(account.getIdToken());
 
 
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.w("oooooo", "Google sign in failed", e);
+                //Log.w("oooooo", "Google sign in failed", e);
             }
         }
     }
@@ -334,7 +338,7 @@ public class LauncherActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
-            Toast.makeText(this, "already logged in", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "already logged in", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
             startActivity(intent);
             finish();
@@ -350,55 +354,23 @@ public class LauncherActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("pppp", "signInWithCredential:success");
+                            //Log.d("pppp", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            //addUser(task,userrr);
+                            database.put("uid",mAuth.getUid());
+                            addUser(task,userrr,database);
 
 
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("oooo", "signInWithCredential:failure", task.getException());
+                            //Log.w("oooo", "signInWithCredential:failure", task.getException());
 
                         }
                     }
                 });
     }
 
-
-
-   /* public void addDataToFirebase(Task<AuthResult> taskk,Map<String, Object> newUser) {
-
-        db.collection("user")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                String username = document.getString("username");
-                                if(username.equals(usernameEdittext.getText().toString())) {
-                                    usernameExist.setText("Username already exist.");
-                                    usernameExist.setVisibility(View.VISIBLE);
-                                    exist = true;
-                                    break;
-                                }
-
-
-                                Log.d("", document.getId() + " => " + document.getData());
-                            }
-                            if(exist==false) {
-                                addUser(taskk,newUser);
-                            }
-                        } else {
-                            Log.d("", "Error getting documents: ", task.getException());
-                        }
-                    }
-                }) ;
-
-    }  */
 
     public void resetPassword() {
 
@@ -461,12 +433,13 @@ public class LauncherActivity extends AppCompatActivity {
     }
 
     public void addUser(Task<AuthResult> task,Map<String, Object> newUser,Map<String,String> database) {
+
         db.collection("user").document(task.getResult().getUser().getUid())
                 .set(newUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d("", "DocumentSnapshot successfully written!");
+                       // Log.d("", "DocumentSnapshot successfully written!");
                         Intent intent = new Intent(LauncherActivity.this,MainActivity.class);
                         startActivity(intent);
                     }
@@ -474,13 +447,13 @@ public class LauncherActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("", "Error writing document", e);
+                       // Log.w("", "Error writing document", e);
                     }
                 });
 
 
 
-        //mDatabase.child("users").child(mAuth.getUid()).child("username").setValue(usernameEdittext.getText().toString());
+
         mDatabase.child("users").child(mAuth.getUid()).setValue(database);
     }
 

@@ -118,7 +118,7 @@ public class TrueFalseActivity extends AppCompatActivity {
                 scoreTextview.setText("Score : "+score+" / "+numberOfQuestions);
                 disableAllQuizButtons(false);
                 btnGuess.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.right_button,null));
-                Toast.makeText(TrueFalseActivity.this, "right", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(TrueFalseActivity.this, "right", Toast.LENGTH_SHORT).show();
 
                 questions.remove(0);
                 icAnswers = new ArrayList<>();

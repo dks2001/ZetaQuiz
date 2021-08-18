@@ -183,7 +183,7 @@ public class ChatActivity extends AppCompatActivity {
                                         .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(ChatActivity.this, "first", Toast.LENGTH_SHORT).show();
+                                       // Toast.makeText(ChatActivity.this, "first", Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -214,7 +214,7 @@ public class ChatActivity extends AppCompatActivity {
                                             .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            Toast.makeText(ChatActivity.this, "done add ", Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(ChatActivity.this, "done add ", Toast.LENGTH_SHORT).show();
                                         }
                                     });
 
@@ -296,6 +296,7 @@ public class ChatActivity extends AppCompatActivity {
         hashMap.put("timestamp", timestamp);
         hashMap.put("dilihat", false);
         hashMap.put("type", "text");
+        hashMap.put("seenStatus","delivered");
         databaseReference.child("Chats").push().setValue(hashMap);
         final DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("ChatList").child(hisUsername).child(myUsername);
         ref1.addValueEventListener(new ValueEventListener() {
@@ -399,6 +400,7 @@ public class ChatActivity extends AppCompatActivity {
         checkOnlineStatus("online");
         super.onStart();
     }
+
 
     private void checkUserStatus() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

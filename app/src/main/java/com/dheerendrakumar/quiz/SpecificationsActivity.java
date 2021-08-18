@@ -152,7 +152,7 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
                                     Toast.makeText(SpecificationsActivity.this, "Questions not available.Please change your specifications.", Toast.LENGTH_LONG).show();
                                     progress.dismiss();
                                 } else if (type.equals("Multiple Choice")) {
-                                    Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(SpecificationsActivity.this, "ok", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(SpecificationsActivity.this, QuizActivity.class);
                                     intent.putStringArrayListExtra("questionTexts", questionTexts);
                                     intent.putStringArrayListExtra("correctAnswer", correctAnswer);
@@ -239,19 +239,20 @@ public class SpecificationsActivity extends AppCompatActivity implements Adapter
                         String s3 = s2.replace("\"","");
                         String[] arr = s3.split(",");
 
-                        String newqText = questionText.replace("&quot;","");
+                        String str = questionText.replace("&quot;","");
+                        String str2 = str.replace("&#039;s","'s");
 
 
-                        questionTexts.add(newqText);
+                        questionTexts.add(str2);
                         correctAnswer.add(questionAnswer);
 
-                        Log.i("question",questionText);
-                        Log.i("answer",questionAnswer);
+                       // Log.i("question",questionText);
+                        //Log.i("answer",questionAnswer);
 
                         ArrayList<String> ica = new ArrayList<>();
 
                         for(int j=0;j<arr.length;j++) {
-                            Log.i("op",arr[j]);
+                            //Log.i("op",arr[j]);
                             ica.add(arr[j]);
                         }
                         incorrectAnswers.add(ica);

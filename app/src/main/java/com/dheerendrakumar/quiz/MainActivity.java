@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayList<String> numberOfPosts;
     ArrayList<String> numberOfFriends;
 
+    boolean islogout = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,11 +156,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
+        randomQuiz = findViewById(R.id.randomQuiz);
+        dailyQuiz = findViewById(R.id.dailyquiz);
+        vocab = findViewById(R.id.vocabImageview);
+        category = findViewById(R.id.categoryll);
+        profileButton = findViewById(R.id.profileButton);
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        drawerLayout = findViewById(R.id.drawerLayout);
+        feed = findViewById(R.id.feed);
+        ImageView choosecategory = findViewById(R.id.chooseCategory);
+
+        randomQuiz.setX(-1000);
+        randomQuiz.animate().translationX(0).setDuration(1000).alpha(1);
+
+        vocab.setX(1000);
+        vocab.animate().translationX(0).setDuration(1000).alpha(1);
+
+        choosecategory.setX(-1000);
+        choosecategory.animate().translationX(0).setDuration(1000).alpha(1);
+
         ImageView imageView = findViewById(R.id.imageView);
         imageView.setY(-1000);
         imageView.animate().translationY(0).setDuration(1000).alpha(1);
 
-        ImageView choosecategory = findViewById(R.id.chooseCategory);
+
         choosecategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,15 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
-        randomQuiz = findViewById(R.id.randomQuiz);
-        dailyQuiz = findViewById(R.id.dailyquiz);
-        vocab = findViewById(R.id.vocabImageview);
-        category = findViewById(R.id.categoryll);
-        profileButton = findViewById(R.id.profileButton);
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        drawerLayout = findViewById(R.id.drawerLayout);
-        feed = findViewById(R.id.feed);
+
 
         feed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,14 +221,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                Log.d("", "DocumentSnapshot data: " + document.getData());
+                                //Log.d("", "DocumentSnapshot data: " + document.getData());
                                 commentUrl = document.getString("imageUrl");
 
                             } else {
-                                Log.d("", "No such document");
+                                //Log.d("", "No such document");
+                                Toast.makeText(MainActivity.this, "post not available", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Log.d("", "get failed with ", task.getException());
+                            //Log.d("", "get failed with ", task.getException());
+                            Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -251,10 +267,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-                                        Log.d("", document.getId() + " => " + document.getData());
+                                        //Log.d("", document.getId() + " => " + document.getData());
                                     }
                                 } else {
-                                    Log.d("", "Error getting documents: ", task.getException());
+                                    //Log.d("", "Error getting documents: ", task.getException());
+                                    Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }) ;
@@ -272,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.putStringArrayListExtra("numOfComments",numberOfComments);
                         intent.putExtra("imageUrll",commentUrl);
                         intent.putExtra("username",myusername);
-                        Log.i("myUsername",myusername);
+                        //Log.i("myUsername",myusername);
                         startActivity(intent);
                         progress.dismiss();
                     }
@@ -340,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(intent);
                         progress.dismiss();
                     }
-                },1500);
+                },2000);
 
             }
         });
@@ -385,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d("", "DocumentSnapshot data: " + document.getData());
+                        //Log.d("", "DocumentSnapshot data: " + document.getData());
                         myname = document.getString("name");
                         email = document.getString("email");
                         imageUrl = document.getString("imageUrl");
@@ -405,10 +422,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
 
                     } else {
-                        Log.d("", "No such document");
+                        //Log.d("", "No such document"
+                        Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.d("", "get failed with ", task.getException());
+                    //Log.d("", "get failed with ", task.getException());
+                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -511,10 +530,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                             numberOfPosts.add(mAuth.getUid());
                                         }
 
-                                        Log.d("", document.getId() + " => " + document.getData());
+                                       // Log.d("", document.getId() + " => " + document.getData());
                                     }
                                 } else {
-                                    Log.d("", "Error getting documents: ", task.getException());
+                                    //Log.d("", "Error getting documents: ", task.getException());
+                                    Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }) ;
@@ -540,12 +560,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.freiendrequest:
 
+
+                ProgressDialog progress = new ProgressDialog(MainActivity.this);
+                progress.setTitle("Loading");
+                progress.setMessage("Wait while loading...");
+                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progress.show();
+
+
                 friendrequest = new ArrayList<>();
                 friendRequestImageurl = new ArrayList<>();
                 friendRequestname = new ArrayList<>();
 
-                Log.i("myusername",myusername);
-                Toast.makeText(this, myusername, Toast.LENGTH_SHORT).show();
+                ///Log.i("myusername",myusername);
+                //Toast.makeText(this, myusername, Toast.LENGTH_SHORT).show();
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("friend_requests").child(myusername);
 
@@ -554,9 +582,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                            Log.i("myusername",myusername);
-                            Log.i("blanlabla",dataSnapshot1.getKey());
-                            Log.i("blablabla",dataSnapshot1.getValue()+"");
+                            //Log.i("myusername",myusername);
+                            //Log.i("blanlabla",dataSnapshot1.getKey());
+                            //Log.i("blablabla",dataSnapshot1.getValue()+"");
 
                             friendrequest.add(String.valueOf(dataSnapshot1.getKey()));
 
@@ -585,9 +613,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                                                     friendRequestname.add(documentSnapshot.getString("name"));
                                                     friendRequestImageurl.add(documentSnapshot.getString("imageUrl"));
-                                                    Log.i("name",documentSnapshot.getString("name"));
-                                                    Log.i("username",friendrequest.get(i));
-                                                    Log.i("imageUrl",documentSnapshot.getString("imageUrl"));
+                                                    //Log.i("name",documentSnapshot.getString("name"));
+                                                    //Log.i("username",friendrequest.get(i));
+                                                    //Log.i("imageUrl",documentSnapshot.getString("imageUrl"));
 
                                             }
 
@@ -609,8 +637,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.putExtra("myUsername",myusername);
 
                         startActivity(intent);
+                        progress.dismiss();
                     }
-                },1000);
+                },1500);
 
 
 
@@ -644,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                             friends = (ArrayList<String>) document.get("friends");
                                         }
 
-                                        Log.d("", document.getId() + " => " + document.getData());
+                                        //Log.d("", document.getId() + " => " + document.getData());
                                     }
                                     Intent intent1 = new Intent(MainActivity.this,AddFriend.class);
                                     intent1.putStringArrayListExtra("name",allUserName);
@@ -655,7 +684,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     startActivity(intent1);
 
                                 } else {
-                                    Log.d("", "Error getting documents: ", task.getException());
+                                    //Log.d("", "Error getting documents: ", task.getException());
+                                    Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }) ;
@@ -718,29 +748,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             sharepopupWindow.dismiss();
-                                            Toast.makeText(MainActivity.this, "Question Shared!", Toast.LENGTH_SHORT).show();
-
-                                          /*  db.collection("Questions").document(myQuestion.getText().toString())
-                                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                                                    DocumentSnapshot documentSnapshot = task.getResult();
-                                                    HashMap<String,Object> res = (HashMap<String, Object>) documentSnapshot.getData();
-
-                                                    res.put("numberOfLikes",0);
-                                                    res.put("numberOfComments",0);
-
-                                                    db.collection("Questions").document(myQuestion.getText().toString())
-                                                            .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            Toast.makeText(MainActivity.this, "like comments done", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-
-                                                }
-                                            }); */
+                                            Toast.makeText(MainActivity.this, "Post created", Toast.LENGTH_SHORT).show();
 
                                         }
                                     })
@@ -869,14 +877,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(View v) {
 
-                        count++;
-                        feedback.put(String.valueOf(count),myfeedback.getText().toString());
+                        if(myfeedback.getText().toString().equals("")) {
+                            Toast.makeText(MainActivity.this, "Please write something...", Toast.LENGTH_SHORT).show();
+                        } else {
 
-                        db.collection("feedbacks").document(username)
-                                .set(feedback, SetOptions.merge());
-                        popupWindow.dismiss();
-                        Toast.makeText(MainActivity.this, "feedback submitted", Toast.LENGTH_SHORT).show();
+                            count++;
+                            feedback.put(String.valueOf(count), myfeedback.getText().toString());
 
+                            db.collection("feedbacks").document(username)
+                                    .set(feedback, SetOptions.merge());
+                            popupWindow.dismiss();
+                            Toast.makeText(MainActivity.this, "feedback submitted", Toast.LENGTH_SHORT).show();
+
+                        }
                     }
                 });
 
@@ -886,12 +899,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             case R.id.shareApp :
-                Toast.makeText(this, "share", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "share", Toast.LENGTH_SHORT).show();
                 try {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
-                    String shareMessage= "\nLet me recommend you this application\n\n";
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "QuizBook");
+                    String shareMessage= "\nEnhance your knowledge and make new friends here only on QuizBOOk\n\n";
                     shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID +"\n\n";
                     shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
                     startActivity(Intent.createChooser(shareIntent, "choose one"));
@@ -901,6 +914,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.logout:
+
+                islogout = true;
+
                 String timestamp = String.valueOf(System.currentTimeMillis());
                 checkOnlineStatus(timestamp);
                 checkTypingStatus("noOne");
@@ -948,7 +964,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Intent selectedImage = result.getData();
                             Uri imageUri = selectedImage.getData();
 
-                            Log.i("uriiii",imageUri+"");
+                            //Log.i("uriiii",imageUri+"");
 
                             String[] filePathcolumn = {MediaStore.Images.Media.DATA};
                             Cursor cursor = getApplicationContext().getContentResolver().query(imageUri,filePathcolumn,null,null,null);
@@ -999,7 +1015,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle unsuccessful uploads
-                    Toast.makeText(MainActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -1011,7 +1027,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             imageDownloadLink = task.getResult().toString();
-                            Log.i("downloadlink",imageDownloadLink);
+                            //Log.i("downloadlink",imageDownloadLink);
                             addImageDownLoadLink();
                         }
 
@@ -1039,16 +1055,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 .set(res).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
                             }
                         });
 
 
                     } else {
-                        Log.d("", "No such document");
+                       // Log.d("", "No such document");
+                        Toast.makeText(MainActivity.this, "not available", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.d("", "get failed with ", task.getException());
+                    //Log.d("", "get failed with ", task.getException());
+                    Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -1061,7 +1079,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (task.isSuccessful()) {
 
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Log.d("", document.getId() + " => " + document.getData());
+                                        //Log.d("", document.getId() + " => " + document.getData());
 
                                          HashMap<String,Object> res = (HashMap<String, Object>) document.getData();
 
@@ -1078,7 +1096,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                              .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                  @Override
                                                                  public void onComplete(@NonNull Task<Void> task) {
-                                                                     Toast.makeText(MainActivity.this, "Successfull", Toast.LENGTH_SHORT).show();
+                                                                     //Toast.makeText(MainActivity.this, "Successfull", Toast.LENGTH_SHORT).show();
                                                                  }
                                                              });
                                                  }
@@ -1095,7 +1113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                          .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                              @Override
                                                              public void onComplete(@NonNull Task<Void> task) {
-                                                                 Toast.makeText(MainActivity.this, "Successfull", Toast.LENGTH_SHORT).show();
+                                                                 //Toast.makeText(MainActivity.this, "Successfull", Toast.LENGTH_SHORT).show();
                                                              }
                                                          });
                                              }
@@ -1107,7 +1125,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     }
 
                         } else {
-                            Log.d("", "Error getting documents: ", task.getException());
+                           // Log.d("", "Error getting documents: ", task.getException());
+                            Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -1120,15 +1139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-   /* @Override
-    protected void onPause() {
-        super.onPause();
-
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        checkOnlineStatus(timestamp);
-        checkTypingStatus("noOne");
-    } */
-
 
     @Override
     public void onBackPressed() {
@@ -1138,6 +1148,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         checkOnlineStatus(timestamp);
         checkTypingStatus("noOne");
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if(islogout==false) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            checkOnlineStatus(timestamp);
+            checkTypingStatus("noOne");
+        }
     }
 
 

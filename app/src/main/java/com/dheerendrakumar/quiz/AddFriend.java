@@ -29,8 +29,6 @@ public class AddFriend extends AppCompatActivity {
         String myusername = getIntent().getStringExtra("myusername");
         ArrayList<String> friends = getIntent().getStringArrayListExtra("friends");
 
-        Log.i("friends",friends+"");
-
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(new AllUserRecyclerAdapter(AddFriend.this,name,username,imageurl,myusername,friends));
         recyclerView.setLayoutManager(new LinearLayoutManager(AddFriend.this));

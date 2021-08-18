@@ -7,6 +7,8 @@
     tools:context=".QuizActivity">
 
 
+
+
     <LinearLayout
         android:id="@+id/vocabmainLiearLayout"
         android:layout_width="match_parent"
@@ -97,7 +99,7 @@
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="10sp"
+                android:textSize="5sp"
                 tools:visibility="visible" />
 
             <Button
@@ -108,7 +110,7 @@
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="10sp"
+                android:textSize="5sp"
                 tools:visibility="visible" />
 
             <Button
@@ -119,7 +121,7 @@
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="10sp"
+                android:textSize="5sp"
                 tools:visibility="visible" />
 
             <Button
@@ -130,7 +132,7 @@
                 android:layout_weight="15"
                 android:background="@drawable/truefalsebutton_corner"
                 android:textColor="@color/black"
-                android:textSize="10sp"
+                android:textSize="5sp"
                 tools:visibility="visible" />
         </LinearLayout>
 
