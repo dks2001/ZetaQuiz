@@ -55,7 +55,7 @@ public class LauncherActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
 
-    private static final int RC_SIGN_IN =1000 ;
+    private static final int RC_SIGN_IN =1000;
     Button signinwithGoogle;
     TextView signUpTextView,usernameExist;
     EditText nameEditText,emailEditText,passwordEditText,usernameEdittext;
@@ -69,6 +69,9 @@ public class LauncherActivity extends AppCompatActivity {
     boolean exist = false;
 
     HashMap<String,String> database = new HashMap<>();
+
+    ArrayList<String> emails = new ArrayList<>();
+    ArrayList<String> usernames = new ArrayList<>();
 
 
     @Override
@@ -97,6 +100,24 @@ public class LauncherActivity extends AppCompatActivity {
                 resetPassword();
             }
         });
+
+
+
+        db.collection("user").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        for(QueryDocumentSnapshot documentSnapshot :task.getResult()) {
+
+                            emails.add(documentSnapshot.getString("email"));
+                            usernames.add(documentSnapshot.getString("username"));
+
+                        }
+                    }
+                });
+
+
 
 
         signinButton.setOnClickListener(new View.OnClickListener() {
@@ -307,18 +328,51 @@ public class LauncherActivity extends AppCompatActivity {
                 userrr.put("name", account.getDisplayName());
                 userrr.put("email", account.getEmail());
                 userrr.put("imageUrl", account.getPhotoUrl()+"");
-                SecureRandom random = new SecureRandom();
 
-                int rand = random.nextInt(90000);
-                userrr.put("username","guest"+rand);
-                ArrayList<String> friends = new ArrayList<>();
-                ArrayList<String> chatList = new ArrayList<>();
-                userrr.put("chatList",chatList);
-                userrr.put("friends",friends);
+                if(emails.contains(account.getEmail())) {
+
+                    userrr.put("username",usernames.get(emails.indexOf(account.getEmail())));
+                    database.put("username",usernames.get(emails.indexOf(account.getEmail())));
+
+                    db.collection("user").get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                    for(QueryDocumentSnapshot documentSnapshot:task.getResult()) {
+
+                                        String username = documentSnapshot.getString("username");
+                                        if(username.equals(usernames.get(emails.indexOf(account.getEmail())))) {
+
+                                            ArrayList<String> frnds = (ArrayList<String>) documentSnapshot.get("friends");
+                                            ArrayList<String> chatList = (ArrayList<String>) documentSnapshot.get("chatList");
+                                            userrr.put("chatList",chatList);
+                                            userrr.put("friends",frnds);
+
+
+                                        }
+
+                                    }
+
+                                }
+                            });
+
+                } else {
+
+                    SecureRandom random = new SecureRandom();
+                    int rand = random.nextInt(90000);
+                    userrr.put("username","guest"+rand);
+                    database.put("username",account.getDisplayName()+rand);
+                    ArrayList<String> friends = new ArrayList<>();
+                    ArrayList<String> chatList = new ArrayList<>();
+                    userrr.put("chatList",chatList);
+                    userrr.put("friends",friends);
+                }
+
+
                 Log.i("image",account.getPhotoUrl()+"");
 
                 database.put("name",account.getDisplayName());
-                database.put("username","guest"+rand);
                 database.put("imageUrl",account.getPhotoUrl()+"");
 
 
@@ -328,6 +382,7 @@ public class LauncherActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 //Log.w("oooooo", "Google sign in failed", e);
+                Toast.makeText(this, "something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -450,8 +505,6 @@ public class LauncherActivity extends AppCompatActivity {
                        // Log.w("", "Error writing document", e);
                     }
                 });
-
-
 
 
         mDatabase.child("users").child(mAuth.getUid()).setValue(database);
