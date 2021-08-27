@@ -7,7 +7,6 @@
 
     <include layout="@layout/toolbar"/>
 
-
     <EditText
         android:id="@+id/sharemyQuestion"
         android:layout_width="match_parent"
@@ -25,7 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:orientation="horizontal">
-
 
         <Button
             android:id="@+id/cancelShareQuestion"
@@ -47,8 +45,6 @@
             android:background="@drawable/rounded_corner"
             android:text="Share" />
 
-
     </LinearLayout>
-
 
 </LinearLayout>

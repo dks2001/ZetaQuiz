@@ -67,6 +67,7 @@ public class LauncherActivity extends AppCompatActivity {
     Handler handler;
     Map<String, Object> userrr;
     boolean exist = false;
+    TextView textview6;
 
     HashMap<String,String> database = new HashMap<>();
 
@@ -93,6 +94,7 @@ public class LauncherActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         TextView logintxtview = findViewById(R.id.logintextview);
+        textview6 = findViewById(R.id.textView6);
         TextView forgotPassword = findViewById(R.id.forgotPasswordtextView);
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,6 +222,7 @@ public class LauncherActivity extends AppCompatActivity {
                 usernameEdittext.setVisibility(View.GONE);
                 signinButton.setText("sign in");
                 signUpTextView.setVisibility(View.VISIBLE);
+                textview6.setText("Don't have an account?");
                 logintxtview.setVisibility(View.GONE);
 
             }
@@ -234,6 +237,7 @@ public class LauncherActivity extends AppCompatActivity {
                 nameEditText.setVisibility(View.VISIBLE);
                 usernameEdittext.setVisibility(View.VISIBLE);
                 signinButton.setText("SIGN UP");
+                textview6.setText("Already have an account?");
                 signUpTextView.setVisibility(View.GONE);
                 logintxtview.setVisibility(View.VISIBLE);
 
@@ -348,8 +352,6 @@ public class LauncherActivity extends AppCompatActivity {
                                             ArrayList<String> chatList = (ArrayList<String>) documentSnapshot.get("chatList");
                                             userrr.put("chatList",chatList);
                                             userrr.put("friends",frnds);
-
-
                                         }
 
                                     }
@@ -360,7 +362,7 @@ public class LauncherActivity extends AppCompatActivity {
                 } else {
 
                     SecureRandom random = new SecureRandom();
-                    int rand = random.nextInt(90000);
+                    int rand = random.nextInt(100000);
                     userrr.put("username","guest"+rand);
                     database.put("username",account.getDisplayName()+rand);
                     ArrayList<String> friends = new ArrayList<>();
@@ -505,7 +507,6 @@ public class LauncherActivity extends AppCompatActivity {
                        // Log.w("", "Error writing document", e);
                     }
                 });
-
 
         mDatabase.child("users").child(mAuth.getUid()).setValue(database);
     }

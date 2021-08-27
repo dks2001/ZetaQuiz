@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,8 +24,8 @@
         android:id="@+id/imageView3"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_marginTop="20dp"
-        app:srcCompat="@drawable/logo_cropped" />
+        android:layout_marginTop="50dp"
+        app:srcCompat="@drawable/logo_cropped"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -114,7 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
             android:text="Forgot Password?"
             android:textAlignment="center"
@@ -127,7 +138,7 @@
         android:id="@+id/hr"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:background="#444"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"></TableRow>
 
@@ -152,9 +163,9 @@
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="25dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="25dp"
         android:background="@drawable/signinbutton"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -186,14 +197,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
+        android:gravity="center"
         android:layout_marginBottom="20dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:text="Don't have an account? "
@@ -204,7 +215,6 @@
             android:id="@+id/signuptextview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:text="Create a free account!"
@@ -229,5 +239,9 @@
 
     </LinearLayout>
 
+
+</LinearLayout>
+
+</ScrollView>
 
 </LinearLayout>

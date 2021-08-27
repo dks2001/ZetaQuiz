@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ArrayList<String> friendRequestImageurl;
 
     ArrayList<String> numberOfPosts;
-    ArrayList<String> numberOfFriends;
+    ArrayList<String> numberOfFriends = new ArrayList<>();
 
     boolean islogout = false;
 
@@ -402,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        //Log.d("", "DocumentSnapshot data: " + document.getData());
+                        Log.d("", "DocumentSnapshot data: " + document.getData());
                         myname = document.getString("name");
                         email = document.getString("email");
                         imageUrl = document.getString("imageUrl");
